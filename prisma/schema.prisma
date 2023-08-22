@@ -11,8 +11,8 @@ datasource db {
 }
 
 model Users {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName String
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
   lastName  String
   createdAt DateTime @default(now()) @db.Timestamp
   updatedAt DateTime @updatedAt

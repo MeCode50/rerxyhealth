@@ -1,13 +1,28 @@
 # backend
-backend api for the rexhealth app 
 
-Naming Conventions 
+backend api for the rexhealth app
 
-Naming convention for file is snake_case / lower case
-Naming convention for functions and variables is camelCase
-All status code has been decleared as enums in enums/index.ts
+#### NAMING CONVENTIONS
 
-Branch naming convention is action/feature-name e.g feature/user-auth , fixed/ user-validations e.t.c
+- Files should be named in snake_case
+- Functions should be named in pascalCase
+- Branch should be names as action/action-made e.g feature/add-auth , bug/ fixed-auth-error
 
+#### NOTE
 
+All status code are in enums/index.ts you just need to import the response code you want
+All commit messages should be well descriptive.
+use the following for your commid prefix
 
+- feat: feature e.g feat: create endpoint to handle wallet
+- bug / fixed : bug fixes e.g bug: fixed prisma model , fixed: fixed endpoint to handle total users
+- chore: minor updates like changing typos , docs and others e.g chore: update Api doc e.t.c
+- enhance: when an enhacment is being made e.g enhance: reduced api response speed
+
+#### CODE FORMATTING
+
+The project is using prettier to format the code.
+to format your code run
+`yarn format` and it will format your code
+
+Thanks lets shot to the moon 🚀🚀🚀

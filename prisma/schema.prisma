@@ -11,9 +11,22 @@ datasource db {
 }
 
 model Users {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  lastName  String
-  createdAt DateTime @default(now()) @db.Timestamp
-  updatedAt DateTime @updatedAt
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  firstname     String
+  lastName      String
+  dateOfBirth   DateTime    @db.Date
+  country       String
+  userOption UserOption?
+  phoneNumber   String
+  schoolName    String?
+  email         String      @unique
+  password      String
+  createdAt     DateTime    @default(now()) @db.Timestamp
+  updatedAt     DateTime    @updatedAt
+}
+
+enum UserOption {
+  Student
+  Professional
+  Manufacturer
 }

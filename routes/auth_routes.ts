@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/login", loginController);
 router.post("/register", createUserController);
-router.post("/verifyOTP", verifyOtp);
+router.post("/verify-otp", verifyOtp);
 
 const authRouter = router;
 export default authRouter;

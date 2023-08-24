@@ -21,6 +21,8 @@ model Users {
   schoolName  String?
   email       String      @unique
   password    String
+  verified    Boolean?    @default(false)
+  otp         Int?
   createdAt   DateTime    @default(now()) @db.Timestamp
   updatedAt   DateTime    @updatedAt
 }

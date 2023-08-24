@@ -2,11 +2,7 @@ import { CRYPTOHASH } from "../constant";
 
 const jwt = require("jsonwebtoken");
 
-interface IProps {
-  data: any;
-}
-
-export const signJWT = ({ data }: IProps) => {
+export const signJWT = (data: {}) => {
   const sign = jwt.sign(data, CRYPTOHASH);
   return sign;
 };

@@ -11,7 +11,7 @@ import { signJWT } from "../helper/jwt_helper";
 const prisma = new PrismaClient();
 
 // Creating new user
-export const createUserController = async (req: Request, res: Response) => {
+const createUserController = async (req: Request, res: Response) => {
   try {
     const {
       firstName,
@@ -55,7 +55,7 @@ export const createUserController = async (req: Request, res: Response) => {
 
     const { id } = newUser;
     const jwt = signJWT({
-      data: id,
+      id: id,
     });
 
     return res
@@ -65,7 +65,6 @@ export const createUserController = async (req: Request, res: Response) => {
     return (
       res
         .status(StatusCode.InternalServerError)
-
         //@ts-ignore
         .json({ message: err?.message })
     );
@@ -73,10 +72,38 @@ export const createUserController = async (req: Request, res: Response) => {
 };
 
 //login user controller
-export const loginController = async (req: Request, res: Response) => {
+const loginController = async (req: Request, res: Response) => {
   try {
     const loginbody = req.body;
     const loginDetails = await validate_login.validate(loginbody);
+
+    const { email, password } = loginDetails;
+    const userExisted = await prisma.users.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!userExisted) {
+      return res.status(StatusCode.NotFound).json({
+        message: "User not found",
+      });
+    }
+
+    const matchPassword = await bcrypt.compare(password, userExisted?.password);
+    if (!matchPassword) {
+      return res.status(StatusCode.BadRequest).json({
+        message: "Incorrect Password",
+      });
+    }
+
+    const signToken = signJWT({
+      id: userExisted?.id,
+    });
+    return res
+      .status(StatusCode.OK)
+      .json({ message: "Login successful", jwt: signToken });
+
   } catch (err) {
     //@ts-ignore
     const errMsg = err?.message;
@@ -85,3 +112,8 @@ export const loginController = async (req: Request, res: Response) => {
     });
   }
 };
+
+//verify otp
+const verifyOtp = async (req: Request, res: Response) => {};
+
+export { loginController, verifyOtp, createUserController };

@@ -1,3 +1,5 @@
 const PORT = process.env.PORT || 3000;
+const CRYPTOHASH =
+  "01e6ab48cc734d6cb39d01862a34343135c8f539c35c40e13f8439303125e543";
 
-export { PORT };
+export { PORT, CRYPTOHASH };

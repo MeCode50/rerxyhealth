@@ -7,7 +7,7 @@ import {
   createUserValidation,
   validate_login,
 } from "../validations/auth_validations";
-
+import { signJWT } from "../helper/jwt_helper";
 const prisma = new PrismaClient();
 
 // Creating new user
@@ -53,9 +53,14 @@ export const createUserController = async (req: Request, res: Response) => {
       },
     });
 
+    const { id } = newUser;
+    const jwt = signJWT({
+      data: id,
+    });
+
     return res
       .status(StatusCode.Created)
-      .json({ message: "user created successfully" });
+      .json({ message: "user created successfully", jwt: jwt, user: newUser });
   } catch (err) {
     return (
       res

@@ -2,6 +2,7 @@ import express, { Application, Response, Request } from "express";
 import { StatusCode } from "./enums/status";
 import { PORT } from "./constant";
 import authRouter from "./routes/auth_routes";
+require("dotenv").config();
 
 const app: Application = express();
 

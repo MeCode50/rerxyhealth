@@ -1,6 +1,5 @@
 import express, { Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import * as yup from "yup";
 import { StatusCode } from "../enums/status";
 import bcrypt from "bcrypt";
 import {
@@ -98,6 +97,7 @@ const loginController = async (req: Request, res: Response) => {
     }
 
     const matchPassword = await bcrypt.compare(password, userExisted?.password);
+
     if (!matchPassword) {
       return res.status(StatusCode.BadRequest).json({
         message: "Incorrect Password",
@@ -145,18 +145,18 @@ const verifyOtp = async (req: Request, res: Response) => {
     }
 
     //verifigy email
-     await prisma.users.update({
-      where: { email },
-      data: {
-        verified: true,
-      },
-    })
-    .then ( data => {
-      res.status(StatusCode.OK).json({
-        message: "Email verified successfully",
+    await prisma.users
+      .update({
+        where: { email },
+        data: {
+          verified: true,
+        },
       })
-    })
-
+      .then((data) => {
+        res.status(StatusCode.OK).json({
+          message: "Email verified successfully",
+        });
+      });
   } catch (err) {
     console.log(err);
   }

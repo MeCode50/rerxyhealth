@@ -1,6 +1,5 @@
 import express, { Request, Response, Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import * as yup from "yup";
 import { StatusCode } from "../enums/status";
 import bcrypt from "bcrypt";
 import {
@@ -8,6 +7,8 @@ import {
   validate_login,
 } from "../validations/auth_validations";
 import { signJWT } from "../helper/jwt_helper";
+import { generateOtp } from "../helper/generate_otp";
+
 const prisma = new PrismaClient();
 
 // Creating new user
@@ -37,6 +38,7 @@ const createUserController = async (req: Request, res: Response) => {
       password,
     });
 
+    const createOtp = generateOtp();
     const hashPassword = await bcrypt.hash(password, 10);
 
     const newUser = await prisma.users.create({
@@ -50,6 +52,7 @@ const createUserController = async (req: Request, res: Response) => {
         schoolName: schoolName,
         email: email,
         password: hashPassword,
+        otp: parseInt(createOtp),
       },
     });
 
@@ -58,9 +61,12 @@ const createUserController = async (req: Request, res: Response) => {
       id: id,
     });
 
-    return res
-      .status(StatusCode.Created)
-      .json({ message: "user created successfully", jwt: jwt, user: newUser });
+    return res.status(StatusCode.Created).json({
+      message: "user created successfully",
+      jwt: jwt,
+      user: newUser,
+      otp: createOtp,
+    });
   } catch (err) {
     return (
       res
@@ -91,6 +97,7 @@ const loginController = async (req: Request, res: Response) => {
     }
 
     const matchPassword = await bcrypt.compare(password, userExisted?.password);
+
     if (!matchPassword) {
       return res.status(StatusCode.BadRequest).json({
         message: "Incorrect Password",
@@ -100,10 +107,10 @@ const loginController = async (req: Request, res: Response) => {
     const signToken = signJWT({
       id: userExisted?.id,
     });
+
     return res
       .status(StatusCode.OK)
       .json({ message: "Login successful", jwt: signToken });
-
   } catch (err) {
     //@ts-ignore
     const errMsg = err?.message;
@@ -114,6 +121,45 @@ const loginController = async (req: Request, res: Response) => {
 };
 
 //verify otp
-const verifyOtp = async (req: Request, res: Response) => {};
+const verifyOtp = async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+  try {
+    const emailExists = await prisma.users.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!emailExists) {
+      return res.status(StatusCode.NotFound).json({
+        message: "Email dosnt exist",
+      });
+    }
+
+    const { otp: userOtp } = emailExists;
+    const matchOtp = otp === userOtp;
+    if (!matchOtp) {
+      return res.status(StatusCode.BadRequest).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    //verifigy email
+    await prisma.users
+      .update({
+        where: { email },
+        data: {
+          verified: true,
+        },
+      })
+      .then((data) => {
+        res.status(StatusCode.OK).json({
+          message: "Email verified successfully",
+        });
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 export { loginController, verifyOtp, createUserController };

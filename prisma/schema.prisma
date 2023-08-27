@@ -23,8 +23,6 @@ model Users {
   password       String
   verified       Boolean?         @default(false)
   otp            Int?
-  usernames      String
-  matricNumber   String
   createdAt      DateTime         @default(now()) @db.Timestamp
   updatedAt      DateTime         @updatedAt
   Wallet         Wallet[]

@@ -23,12 +23,13 @@ model Users {
   password       String
   verified       Boolean?         @default(false)
   otp            Int?
-  usernames      String
-  matricNumber   String
   createdAt      DateTime         @default(now()) @db.Timestamp
   updatedAt      DateTime         @updatedAt
   Wallet         Wallet[]
   TransactionPin TransactionPin[]
+  Bvn            Bvn[]
+  SetupProfile   SetupProfile[]
+  Appointment    Appointment[]
 }
 
 model Wallet {
@@ -40,6 +41,27 @@ model Wallet {
 model TransactionPin {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   pin     String
+  user    Users  @relation(fields: [usersId], references: [id])
+  usersId String @db.ObjectId
+}
+
+model Bvn {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  bvn     Int
+  user    Users  @relation(fields: [usersId], references: [id])
+  usersId String @db.ObjectId
+}
+
+model SetupProfile {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  username     String
+  matricNumber String
+  user         Users  @relation(fields: [usersId], references: [id])
+  usersId      String @db.ObjectId
+}
+
+model Appointment {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
   user    Users  @relation(fields: [usersId], references: [id])
   usersId String @db.ObjectId
 }

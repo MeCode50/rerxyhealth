@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Response, Request } from "express";
-import { StatusCode } from "../enums/status";
+import { StatusCode } from "../../enums/status";
 
 const prisma = new PrismaClient();
 
@@ -23,10 +23,9 @@ const createTransactionPin = async (req: Request, res: Response) => {
         .status(StatusCode.InternalServerError)
         .json({ message: "Failed to create pin" });
 
-    return res.status(StatusCode.Created)
-    .json({ message: "Pin has been created" });
-
-
+    return res
+      .status(StatusCode.Created)
+      .json({ message: "Pin has been created" });
   } catch (err) {
     return;
   }

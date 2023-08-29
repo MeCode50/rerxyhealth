@@ -3,15 +3,21 @@ import { StatusCode } from "./enums/status";
 import { PORT } from "./constant";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
+import cors from "cors";
+
 require("dotenv").config();
 
 const app: Application = express();
-
 app.use(express.json());
+app.use(cors());
+
+const routes = [authRouter, onboardingRouter];
 
 // API routes
-app.use("/api", authRouter);
-app.use("/api", onboardingRouter)
+
+routes.map((items) => {
+  app.use("/api", items);
+});
 
 app.get("/", (req: Request, res: Response) => {
   res

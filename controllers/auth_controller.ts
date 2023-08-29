@@ -43,13 +43,13 @@ const createUserController = async (req: Request, res: Response) => {
 
     //check if user already exists
     const userExisted = await prisma.users.findUnique({
-      where: {email}
-    })
+      where: { email },
+    });
 
-    if ( userExisted ) {
+    if (userExisted) {
       res.status(StatusCode.Found).json({
-        message: "User already exists"
-      })
+        message: "User already exists",
+      });
     }
 
     const newUser = await prisma.users.create({

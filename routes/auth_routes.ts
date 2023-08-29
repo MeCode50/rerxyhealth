@@ -13,7 +13,5 @@ router.post("/register", createUserController);
 router.post("/verify-otp", verifyOtp);
 router.post("/reset/pin", resetTransactionPin);
 
-
-
 const authRouter = router;
 export default authRouter;

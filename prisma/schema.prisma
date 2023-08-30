@@ -30,6 +30,7 @@ model Users {
   Bvn            Bvn[]
   SetupProfile   SetupProfile[]
   Appointment    Appointment[]
+  Cart           CartItem[]
 }
 
 model Wallet {
@@ -70,4 +71,37 @@ enum UserOption {
   Student
   Professional
   Manufacturer
+}
+
+model Products {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  image       String
+  title       String
+  amount      Int
+  delivery    String
+  description String
+  howToUse    String
+  quantity    Int
+  productCategory productCategory
+  CartItem    CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  image     String
+  title     String
+  amount    Int
+  delivery  String
+  quantity  String
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Products @relation(fields: [productId], references: [id])
+}
+
+enum productCategory {
+  All_Product
+  Drugs
+  Female_Needs
+  First_Aids_Equipment
 }

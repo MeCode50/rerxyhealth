@@ -41,6 +41,17 @@ const createUserController = async (req: Request, res: Response) => {
     const createOtp = generateOtp();
     const hashPassword = await bcrypt.hash(password, 10);
 
+    //check if user already exists
+    const userExisted = await prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (userExisted) {
+      res.status(StatusCode.Found).json({
+        message: "User already exists",
+      });
+    }
+
     const newUser = await prisma.users.create({
       data: {
         firstName: firstName,

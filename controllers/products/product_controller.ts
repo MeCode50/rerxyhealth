@@ -80,9 +80,19 @@ const deleteProduct = async (req:Request, res:Response)=>{
     const deleteOne = await prisma.products.delete({
       where: { id }
     })
+    res
+    .status(StatusCode.OK)
+    .json({
+      message: "Delete successfully",
+      delete: deleteOne
+    })
   }catch(err){
-    
+    res
+    .status(StatusCode.BadRequest)
+    .json({
+      message: err
+    })
   }
 }
 
-export {getAllProduct, createProduct}
+export {getAllProduct, createProduct, deleteProduct}

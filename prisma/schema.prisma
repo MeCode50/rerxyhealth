@@ -67,23 +67,17 @@ model Appointment {
   usersId String @db.ObjectId
 }
 
-enum UserOption {
-  Student
-  Professional
-  Manufacturer
-}
-
 model Products {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  image       String
-  title       String
-  amount      Int
-  delivery    String
-  description String
-  howToUse    String
-  quantity    Int
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  image           String
+  title           String
+  amount          Int
+  delivery        String
+  description     String
+  howToUse        String
+  quantity        Int
   productCategory productCategory
-  CartItem    CartItem[]
+  CartItem        CartItem[]
 }
 
 model CartItem {
@@ -104,4 +98,10 @@ enum productCategory {
   Drugs
   Female_Needs
   First_Aids_Equipment
+}
+
+enum UserOption {
+  Student
+  Professional
+  Manufacturer
 }

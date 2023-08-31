@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon index.ts",
     "format": "prettier --write .",
-    "db": "npx prisma pull",
+    "pull": "npx prisma db pull",
+    "push": "npx prisma db push",
     "studio": "npx prisma studio"
   },
   "dependencies": {

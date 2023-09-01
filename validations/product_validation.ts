@@ -8,5 +8,5 @@ export const validate_product = Yup.object().shape({
   description: Yup.string().required(),
   howToUse: Yup.string().required(),
   quantity: Yup.number().required(),
-  productCategory: Yup.string().required()
-})
+  productCategory: Yup.string().required(),
+});

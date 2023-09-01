@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/product", isAuthenticated, getAllProduct);
 router.post("/create", isAuthenticated, createProduct);
-router.delete("/prodct/id", isAuthenticated, deleteProduct);
+router.delete("/product/id", isAuthenticated, deleteProduct);
 
 const productRouter = router;
 export default productRouter;

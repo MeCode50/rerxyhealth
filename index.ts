@@ -4,6 +4,8 @@ import { PORT } from "./constant";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
 import cors from "cors";
+import productRouter from "./routes/product_router";
+import profileRouter from "./routes/user";
 
 require("dotenv").config();
 
@@ -11,7 +13,7 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-const routes = [authRouter, onboardingRouter];
+const routes = [authRouter, onboardingRouter, productRouter, profileRouter];
 
 // API routes
 

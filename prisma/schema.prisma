@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Users {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
   firstName      String
   lastName       String
   dateOfBirth    String
@@ -19,30 +19,32 @@ model Users {
   userOption     UserOption?
   phoneNumber    String
   schoolName     String?
-  email          String           @unique
+  email          String          @unique
   password       String
-  verified       Boolean?         @default(false)
+  verified       Boolean?        @default(false)
   otp            Int?
-  createdAt      DateTime         @default(now()) @db.Timestamp
-  updatedAt      DateTime         @updatedAt
-  Wallet         Wallet[]
-  TransactionPin TransactionPin[]
+  createdAt      DateTime        @default(now()) @db.Timestamp
+  updatedAt      DateTime        @updatedAt
+  Wallet         Wallet?
   Bvn            Bvn[]
-  SetupProfile   SetupProfile[]
+  SetupProfile   SetupProfile?
   Appointment    Appointment[]
-}
-
-model Wallet {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    Users  @relation(fields: [usersId], references: [id])
-  usersId String @db.ObjectId
+  Cart           CartItem[]
+  TransactionPin TransactionPin?
 }
 
 model TransactionPin {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   pin     String
+  user    Users? @relation(fields: [usersId], references: [id])
+  usersId String @unique @db.ObjectId
+}
+
+model Wallet {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  balance Int    @default(0)
   user    Users  @relation(fields: [usersId], references: [id])
-  usersId String @db.ObjectId
+  usersId String @unique @db.ObjectId
 }
 
 model Bvn {
@@ -57,13 +59,46 @@ model SetupProfile {
   username     String
   matricNumber String
   user         Users  @relation(fields: [usersId], references: [id])
-  usersId      String @db.ObjectId
+  usersId      String @unique @db.ObjectId
 }
 
 model Appointment {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   user    Users  @relation(fields: [usersId], references: [id])
   usersId String @db.ObjectId
+}
+
+model Products {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  image           String
+  title           String
+  amount          Int
+  delivery        String
+  description     String
+  howToUse        String
+  quantity        Int
+  productCategory productCategory
+  CartItem        CartItem[]
+}
+
+model CartItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  image     String
+  title     String
+  amount    Int
+  delivery  String
+  quantity  String
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Products @relation(fields: [productId], references: [id])
+}
+
+enum productCategory {
+  All_Product
+  Drugs
+  Female_Needs
+  First_Aids_Equipment
 }
 
 enum UserOption {

@@ -12,9 +12,7 @@ const createTransactionPin = async (req: Request, res: Response) => {
     const createPin = await prisma.transactionPin.create({
       data: {
         pin: pin,
-        user: {
-          connect: { id: userId },
-        },
+        usersId: userId,
       },
     });
 
@@ -27,11 +25,9 @@ const createTransactionPin = async (req: Request, res: Response) => {
       .status(StatusCode.Created)
       .json({ message: "Pin has been created" });
   } catch (err) {
-    console.log(err)
-    res.status(StatusCode.InternalServerError)
-      .json({ message: err });
+    console.log(err);
+    res.status(StatusCode.InternalServerError).json({ message: err });
     return err;
-
   }
 };
 

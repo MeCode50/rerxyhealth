@@ -148,7 +148,7 @@ const verifyOtp = async (req: Request, res: Response) => {
     }
 
     const { otp: userOtp } = emailExists;
-    console.log(userOtp)
+    console.log(userOtp);
     const matchOtp = otp === userOtp;
     if (!matchOtp) {
       return res.status(StatusCode.BadRequest).json({

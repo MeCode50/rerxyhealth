@@ -36,9 +36,9 @@ export const isAuthenticated = (
   try {
     const authorize = req.headers.authorization;
     const token = authorize?.split(" ")[1];
-    const decodedToken = jwt.verify(token, CRYPTOHASH) as { id: string }; 
+    const decodedToken = jwt.verify(token, CRYPTOHASH) as { id: string };
     //@ts-ignore
-    req.id = decodedToken.id; 
+    req.id = decodedToken.id;
     return next();
   } catch (err) {
     return res.status(StatusCode.Unauthorized).json({

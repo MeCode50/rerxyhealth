@@ -1,19 +1,19 @@
 //this function helps to get user profile
 import { Request, Response } from "express";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { StatusCode } from "../enums/status";
 
 export const getUserProfile = async (req: Request, res: Response) => {
   const prisma = new PrismaClient();
   //@ts-ignore
   const id = req?.id;
-  
+
   try {
     const getProfile = await prisma.users.findUnique({
       where: { id },
       include: {
         TransactionPin: true,
-        SetupProfile: true
+        SetupProfile: true,
       },
     });
 

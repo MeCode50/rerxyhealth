@@ -1,4 +1,3 @@
-
 import express from "express";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 import { getUserProfile } from "../controllers/profile";

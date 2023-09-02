@@ -5,7 +5,7 @@ import completeProfile from "../controllers/onboarding/complete_profile";
 const router = express.Router();
 
 router.post("/onboard/create-pin", isAuthenticated, createTransactionPin);
-router.post("onboard/completeProfile", isAuthenticated, completeProfile);
+router.post("/onboard/complete-profile", isAuthenticated, completeProfile);
 
 const onboardingRouter = router;
 export default onboardingRouter;

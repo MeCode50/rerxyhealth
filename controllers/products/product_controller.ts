@@ -1,30 +1,28 @@
 import { PrismaClient } from "@prisma/client";
-import {Request, Response} from "express"
+import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import { validate_product } from "../../validations/product_validation";
 
-const prisma = new PrismaClient
+const prisma = new PrismaClient();
 
 // Get all Product
-const getAllProduct = async(req:Request, res:Response)=>{
-  try{
-    const product = await prisma.products.findMany()
-    res
-    .status(StatusCode.Found)
-    .json({
+const getAllProduct = async (req: Request, res: Response) => {
+  try {
+    const product = await prisma.products.findMany();
+    res.status(StatusCode.Found).json({
       message: "Product Found",
-      product: product
-    })
-  }catch(err){
+      product: product,
+    });
+  } catch (err) {
     res
-    .status(StatusCode.NotFound)
-    .json({message: `Product not Found ${err}`})
+      .status(StatusCode.NotFound)
+      .json({ message: `Product not Found ${err}` });
   }
-}
+};
 
-// Create new Product 
-const createProduct = async(req:Request, res:Response)=>{
-  try{
+// Create new Product
+const createProduct = async (req: Request, res: Response) => {
+  try {
     const {
       image,
       title,
@@ -33,8 +31,8 @@ const createProduct = async(req:Request, res:Response)=>{
       description,
       howToUse,
       quantity,
-      productCategory
-    } = req.body
+      productCategory,
+    } = req.body;
 
     await validate_product.validate({
       image,
@@ -44,8 +42,8 @@ const createProduct = async(req:Request, res:Response)=>{
       description,
       howToUse,
       quantity,
-      productCategory
-    })
+      productCategory,
+    });
 
     const newProduct = await prisma.products.create({
       data: {
@@ -56,43 +54,35 @@ const createProduct = async(req:Request, res:Response)=>{
         description,
         howToUse,
         quantity,
-        productCategory
-      }
-    })
+        productCategory,
+      },
+    });
 
-    res
-    .status(StatusCode.Created)
-    .json({
+    res.status(StatusCode.Created).json({
       message: "Product created",
-      product: newProduct
-    })
-
-  }catch(error){
-    res
-      .status(StatusCode.InternalServerError)
+      product: newProduct,
+    });
+  } catch (error) {
+    res.status(StatusCode.InternalServerError);
   }
-}
+};
 
 // Delete Product
-const deleteProduct = async (req:Request, res:Response)=>{
-  try{
-    const { id } = req.body
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
     const deleteOne = await prisma.products.delete({
-      where: { id }
-    })
-    res
-    .status(StatusCode.OK)
-    .json({
+      where: { id },
+    });
+    res.status(StatusCode.OK).json({
       message: "Delete successfully",
-      delete: deleteOne
-    })
-  }catch(err){
-    res
-    .status(StatusCode.BadRequest)
-    .json({
-      message: err
-    })
+      delete: deleteOne,
+    });
+  } catch (err) {
+    res.status(StatusCode.BadRequest).json({
+      message: err,
+    });
   }
-}
+};
 
-export {getAllProduct, createProduct, deleteProduct}
+export { getAllProduct, createProduct, deleteProduct };

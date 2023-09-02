@@ -9,4 +9,4 @@ router.post("/create", isAuthenticated, createProduct)
 router.delete("/prodct/id", isAuthenticated, deleteProduct)
 
 const productRouter = router
-export default productRouter
+export default productRouter 

@@ -27,7 +27,11 @@ const createTransactionPin = async (req: Request, res: Response) => {
       .status(StatusCode.Created)
       .json({ message: "Pin has been created" });
   } catch (err) {
-    return;
+    console.log(err)
+    res.status(StatusCode.InternalServerError)
+      .json({ message: err });
+    return err;
+
   }
 };
 

@@ -11,37 +11,39 @@ datasource db {
 }
 
 model Users {
-  id             String           @id @default(auto()) @map("_id") @db.ObjectId
-  firstName      String
-  lastName       String
-  dateOfBirth    String
-  country        String
-  userOption     UserOption?
-  phoneNumber    String
-  schoolName     String?
-  email          String           @unique
-  password       String
-  verified       Boolean?         @default(false)
-  otp            Int?
-  createdAt      DateTime         @default(now()) @db.Timestamp
-  updatedAt      DateTime         @updatedAt
-  Wallet         Wallet[]
-  TransactionPin TransactionPin[]
-  Bvn            Bvn[]
-  SetupProfile   SetupProfile[]
-  Appointment    Appointment[]
-  Cart           CartItem[]
-}
-
-model Wallet {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    Users  @relation(fields: [usersId], references: [id])
-  usersId String @db.ObjectId
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  firstName        String
+  lastName         String
+  dateOfBirth      String
+  country          String
+  userOption       UserOption?
+  phoneNumber      String
+  schoolName       String?
+  email            String         @unique
+  password         String
+  verified         Boolean?       @default(false)
+  otp              Int?
+  createdAt        DateTime       @default(now()) @db.Timestamp
+  updatedAt        DateTime       @updatedAt
+  Wallet           Wallet[]
+  transaction      TransactionPin @relation(fields: [transactionPinId], references: [id])
+  Bvn              Bvn[]
+  SetupProfile     SetupProfile[]
+  Appointment      Appointment[]
+  Cart             CartItem[]
+  transactionPinId String         @unique @db.ObjectId
 }
 
 model TransactionPin {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   pin     String
+  user    Users?
+  usersId String @db.ObjectId
+}
+
+model Wallet {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  balance Int    @default(0)
   user    Users  @relation(fields: [usersId], references: [id])
   usersId String @db.ObjectId
 }

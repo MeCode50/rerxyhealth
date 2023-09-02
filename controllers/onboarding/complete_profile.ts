@@ -24,18 +24,31 @@ const completeProfile = async (req: Request, res: Response) => {
       return res
         .status(StatusCode.Forbidden)
         .json({ message: "Failed to add data" });
-    return res
-      .status(StatusCode.Created)
-      .json({
-        message: "Username created successfully",
-        data: completeProfile,
-      });
+
+    //create wallet for the user if user has completed account setup
+    const createWallet = await prisma.wallet.create({
+      data: {
+        balance: 0,
+        usersId: userId,
+      },
+    });
+
+    if (!createWallet) {
+      res.status(StatusCode.Forbidden).json({ message: "Wallet created" });
+    }
+
+    return res.status(StatusCode.Created).json({
+      message: `Account setup has been completed successfully and wallet has been created for the user`,
+      data: completeProfile,
+    });
   } catch (err) {
     //@ts-ignore
     const errMsg = err?.message;
     res.status(StatusCode.BadRequest).json({
       message: errMsg,
     });
+  } finally {
+    prisma.$disconnect();
   }
 };
 

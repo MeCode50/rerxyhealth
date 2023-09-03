@@ -7,6 +7,7 @@ import cors from "cors";
 import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
+import { appointmentRouter } from "./routes/appointment_route";
 
 require("dotenv").config();
 
@@ -21,6 +22,7 @@ const routes = [
   productRouter,
   profileRouter,
   walletRouter,
+  appointmentRouter,
 ];
 
 // API routes

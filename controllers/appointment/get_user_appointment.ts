@@ -28,3 +28,33 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
     return err;
   }
 };
+
+
+//fiter through appointment 
+export const getAppointmentByDate = async (req: Request, res: Response) => {
+    //@ts-ignore
+    const userId = req?.id;
+    const {date} = req.params;
+    try {
+      const getAppointment = await prisma.appointment.findMany({
+        where: {
+          usersId: userId,
+          day: date
+        },
+        include: {
+          Doctors: false
+        }
+      });
+  
+      if (!getAppointment)
+        return res
+          .status(StatusCode.NoContent)
+          .json({ message: `No scheduled appoint for this date ${date}` });
+      return res
+        .status(StatusCode.OK)
+        .json({ message: `Appoints for ${date}`, data: getAppointment });
+    } catch (err) {
+      return err;
+    }
+  };
+  

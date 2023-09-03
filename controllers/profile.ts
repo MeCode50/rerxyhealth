@@ -14,7 +14,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
       include: {
         TransactionPin: true,
         SetupProfile: true,
-        Wallet: true
+        Wallet: true,
       },
     });
 

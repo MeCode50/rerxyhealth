@@ -24,12 +24,10 @@ const completeProfile = async (req: Request, res: Response) => {
       return res
         .status(StatusCode.Forbidden)
         .json({ message: "Failed to add data" });
-    return res
-      .status(StatusCode.Created)
-      .json({
-        message: "Username created successfully",
-        data: completeProfile,
-      });
+    return res.status(StatusCode.Created).json({
+      message: "Username created successfully",
+      data: completeProfile,
+    });
   } catch (err) {
     //@ts-ignore
     const errMsg = err?.message;

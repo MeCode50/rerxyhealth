@@ -65,15 +65,16 @@ model SetupProfile {
 }
 
 model Appointment {
-  id              String  @id @default(auto()) @map("_id") @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
   day             String
   time            String
+  hasEnded        Boolean? @default(false)
   period          Period
   appointmentType String
-  Doctors         Doctors @relation(fields: [doctorsId], references: [id])
-  user            Users   @relation(fields: [usersId], references: [id])
-  usersId         String  @db.ObjectId
-  doctorsId       String  @db.ObjectId
+  Doctors         Doctors  @relation(fields: [doctorsId], references: [id])
+  user            Users    @relation(fields: [usersId], references: [id])
+  usersId         String   @db.ObjectId
+  doctorsId       String   @db.ObjectId
 }
 
 //doctors schemas 

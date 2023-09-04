@@ -16,7 +16,6 @@ model Users {
   lastName       String
   dateOfBirth    String
   country        String
-  userOption     UserOption?
   phoneNumber    String
   schoolName     String?
   email          String          @unique
@@ -25,6 +24,9 @@ model Users {
   otp            Int?
   createdAt      DateTime        @default(now()) @db.Timestamp
   updatedAt      DateTime        @updatedAt
+  isSuspended    Boolean?        @default(false)
+  isDeleted      Boolean?        @default(false)
+  userOption     UserOption?
   Wallet         Wallet?
   Bvn            Bvn[]
   SetupProfile   SetupProfile?
@@ -63,9 +65,25 @@ model SetupProfile {
 }
 
 model Appointment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    Users  @relation(fields: [usersId], references: [id])
-  usersId String @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  day             String
+  time            String
+  hasEnded        Boolean? @default(false)
+  period          Period
+  appointmentType String
+  Doctors         Doctors  @relation(fields: [doctorsId], references: [id])
+  user            Users    @relation(fields: [usersId], references: [id])
+  usersId         String   @db.ObjectId
+  doctorsId       String   @db.ObjectId
+}
+
+//doctors schemas 
+model Doctors {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName     String
+  lastName      String
+  Appointment   Appointment[]
+  appointmentId String?       @db.ObjectId
 }
 
 model Products {
@@ -105,4 +123,9 @@ enum UserOption {
   Student
   Professional
   Manufacturer
+}
+
+enum Period {
+  Morning
+  Evening
 }

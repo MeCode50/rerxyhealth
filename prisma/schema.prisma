@@ -26,7 +26,6 @@ model Users {
   updatedAt      DateTime        @updatedAt
   isSuspended    Boolean?        @default(false)
   isDeleted      Boolean?        @default(false)
-  userOption     UserOption?
   Wallet         Wallet?
   Bvn            Bvn[]
   SetupProfile   SetupProfile?
@@ -117,12 +116,6 @@ enum productCategory {
   Drugs
   Female_Needs
   First_Aids_Equipment
-}
-
-enum UserOption {
-  Student
-  Professional
-  Manufacturer
 }
 
 enum Period {

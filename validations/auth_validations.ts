@@ -5,7 +5,6 @@ const createUserValidation = Yup.object().shape({
   lastName: Yup.string().required(),
   dateOfBirth: Yup.date().required(),
   country: Yup.string().required(),
-  userOption: Yup.string().required(),
   phoneNumber: Yup.string().required(),
   schoolName: Yup.string().required(),
   email: Yup.string().email().required(),

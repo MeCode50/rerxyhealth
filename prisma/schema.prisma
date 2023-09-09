@@ -32,6 +32,7 @@ model Users {
   Appointment    Appointment[]
   Cart           CartItem[]
   TransactionPin TransactionPin?
+  SaveProduct SaveProduct[]
 }
 
 model TransactionPin {
@@ -96,6 +97,7 @@ model Products {
   quantity        Int
   productCategory productCategory
   CartItem        CartItem[]
+  SaveProduct SaveProduct[]
 }
 
 model CartItem {
@@ -103,12 +105,24 @@ model CartItem {
   image     String
   title     String
   amount    Int
-  delivery  String
+  delivery String
   quantity  String
   userId    String   @db.ObjectId
   user      Users    @relation(fields: [userId], references: [id])
   productId String   @db.ObjectId
   product   Products @relation(fields: [productId], references: [id])
+}
+
+model SaveProduct {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  image String
+  title String
+  amount Int
+  delivery String
+  userId String @db.ObjectId
+  user Users @relation(fields: [userId], references: [id])
+  productId String @db.ObjectId
+  product Products @relation(fields: [productId], references: [id])
 }
 
 enum productCategory {

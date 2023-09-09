@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
-import { validate_cart, validate_product } from "../../validations/product_validation";
+import {
+  validate_cart,
+  validate_product,
+} from "../../validations/product_validation";
 
 const prisma = new PrismaClient();
 
@@ -100,6 +103,5 @@ const deleteProduct = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export { getAllProduct, createProduct, deleteProduct, getById };

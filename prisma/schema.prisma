@@ -35,6 +35,14 @@ model Users {
   SaveProduct    SaveProduct[]
 }
 
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamp
+  updatedAt DateTime @updatedAt
+}
+
 model TransactionPin {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   pin     String

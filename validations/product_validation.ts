@@ -17,11 +17,11 @@ export const validate_cart = Yup.object().shape({
   amount: Yup.number().required(),
   delivery: Yup.number().required(),
   quantity: Yup.number().required(),
-})
+});
 
 export const validate_save = Yup.object().shape({
   image: Yup.string().required(),
   title: Yup.string().required(),
   amount: Yup.number().required(),
   delivery: Yup.number().required(),
-})
+});

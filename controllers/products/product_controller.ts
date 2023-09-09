@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
-import { validate_product } from "../../validations/product_validation";
+import { validate_cart, validate_product } from "../../validations/product_validation";
 
 const prisma = new PrismaClient();
 
@@ -101,24 +101,5 @@ const deleteProduct = async (req: Request, res: Response) => {
   }
 };
 
-// Get all Product Cart
-const addToCart = async (req: Request, res: Response) => {
-  try {
-    // @ts-ignore
-    const userId = req?.id;
-    const getAllCart = await prisma.cartItem.findMany({
-      where: {
-        userId: userId,
-      },
-    });
-    res.status(StatusCode.Found).json({
-      getAllCart: getAllCart,
-    });
-  } catch (err) {
-    res.status(StatusCode.NotFound).json({
-      message: err,
-    });
-  }
-};
 
-export { getAllProduct, createProduct, deleteProduct, getById, addToCart };
+export { getAllProduct, createProduct, deleteProduct, getById };

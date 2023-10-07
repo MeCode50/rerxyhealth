@@ -132,7 +132,7 @@ const loginController = async (req: Request, res: Response) => {
 const verifyOtp = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
   try {
-    const emailExists = await prisma.users.findFirst({
+    const emailExists = await prisma.users.findUnique({
       where: {
         email,
       },
@@ -146,7 +146,7 @@ const verifyOtp = async (req: Request, res: Response) => {
 
     const { otp: userOtp } = emailExists;
     console.log(userOtp);
-    const matchOtp = otp === userOtp;
+    const matchOtp = +otp === userOtp;
     if (!matchOtp) {
       return res.status(StatusCode.BadRequest).json({
         message: "Invalid OTP",

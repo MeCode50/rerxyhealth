@@ -58,7 +58,7 @@ const createUserController = async (req: Request, res: Response) => {
         country: country,
         phoneNumber: phoneNumber,
         schoolName: schoolName,
-        email: email,
+        email: email.toLowerCase(),
         password: hashPassword,
         otp: parseInt(createOtp),
       },
@@ -72,7 +72,15 @@ const createUserController = async (req: Request, res: Response) => {
     return res.status(StatusCode.Created).json({
       message: "user created successfully",
       jwt: jwt,
-      user: newUser,
+      defails: {
+        email: newUser?.email,
+        firstName: newUser?.email ,
+        lastName: newUser?.lastName,
+        dateOfBirth: newUser?.dateOfBirth,
+        country: newUser?.country,
+        phoneNumber: newUser?.phoneNumber,
+        schoolName: newUser?.schoolName,
+      },
       otp: createOtp,
     });
   } catch (err) {

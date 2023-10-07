@@ -23,7 +23,7 @@ router.get("/cart", getAllCart);
 router.delete("/cart/remove/:id", removeCart);
 
 // Save Product router
-router.post('/save/create', createSave);
+router.post("/save/create", createSave);
 router.get('/save', getAllSave);
 router.delete('/save/delete/:id', removeSave)
 

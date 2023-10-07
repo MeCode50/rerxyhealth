@@ -24,7 +24,7 @@ const routes = [
   profileRouter,
   walletRouter,
   appointmentRouter,
-  adminRouter
+  adminRouter,
 ];
 
 // API routes

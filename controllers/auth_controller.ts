@@ -74,7 +74,7 @@ const createUserController = async (req: Request, res: Response) => {
       jwt: jwt,
       defails: {
         email: newUser?.email,
-        firstName: newUser?.email ,
+        firstName: newUser?.email,
         lastName: newUser?.lastName,
         dateOfBirth: newUser?.dateOfBirth,
         country: newUser?.country,
@@ -123,6 +123,27 @@ const loginController = async (req: Request, res: Response) => {
     const signToken = signJWT({
       id: userExisted?.id,
     });
+
+    //check if email address has been verified
+    //if no it returns an error
+    if (userExisted.verified === false) {
+      const otp = generateOtp();
+      const updateOtp = await prisma.users.update({
+        where: { email },
+        data: { otp },
+      });
+
+      if (!updateOtp) {
+        return res.status(StatusCode.InternalServerError).json({
+          message: `Something went wrong`,
+        });
+      }
+
+      return res.status(StatusCode.Forbidden).json({
+        message: `The email ${userExisted.email} is not verified, please verify email`,
+        otp: otp,
+      });
+    }
 
     return res
       .status(StatusCode.OK)

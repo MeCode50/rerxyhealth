@@ -127,14 +127,14 @@ const loginController = async (req: Request, res: Response) => {
     //check if email address has been verified
     //if no it returns an error
     if (userExisted.verified === false) {
-      const otp = generateOtp();
+      const otp = +generateOtp();
       const updateOtp = await prisma.users.update({
         where: { email },
         data: { otp },
       });
 
       if (!updateOtp) {
-        return res.status(StatusCode.InternalServerError).json({
+        res.status(StatusCode.InternalServerError).json({
           message: `Something went wrong`,
         });
       }

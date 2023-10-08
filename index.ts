@@ -9,6 +9,7 @@ import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
 import { appointmentRouter } from "./routes/appointment_route";
 import adminRouter from "./routes/admin_route";
+import { settings_router } from "./routes/settings_route";
 
 require("dotenv").config();
 
@@ -25,6 +26,7 @@ const routes = [
   walletRouter,
   appointmentRouter,
   adminRouter,
+  settings_router,
 ];
 
 // API routes

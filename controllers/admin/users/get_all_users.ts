@@ -23,6 +23,4 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
-
-
-export { getAllUsers  };
+export { getAllUsers };

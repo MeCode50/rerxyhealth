@@ -6,6 +6,7 @@ import onboardingRouter from "./routes/onboarding_routes";
 import cors from "cors";
 import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
+import walletRouter from "./routes/wallet_routes";
 
 require("dotenv").config();
 
@@ -13,10 +14,16 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-const routes = [authRouter, onboardingRouter, productRouter, profileRouter];
+//Routes handlers
+const routes = [
+  authRouter,
+  onboardingRouter,
+  productRouter,
+  profileRouter,
+  walletRouter,
+];
 
 // API routes
-
 routes.map((items) => {
   app.use("/api", items);
 });

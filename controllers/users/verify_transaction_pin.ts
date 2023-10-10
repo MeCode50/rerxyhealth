@@ -3,7 +3,8 @@ import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 
 const prisma = new PrismaClient();
-export const get_transaction_pin = async (req: Request, res: Response) => {
+export const verify_transaction_pin = async (req: Request, res: Response) => {
+  const { pin } = req.body;
   //@ts-ignore
   const id = req?.id as string;
   const isExisted = await prisma.users.findUnique({
@@ -19,9 +20,16 @@ export const get_transaction_pin = async (req: Request, res: Response) => {
     });
   }
 
-  const transactionPin = isExisted.TransactionPin?.pin;
-  return res.status(StatusCode.Found).send({
-    message: "Transction Pin retrived successfully",
-    pin: Number(transactionPin),
+  const transactionPin = Number(isExisted.TransactionPin?.pin);
+
+  if (Number(pin) !== transactionPin) {
+    return res.status(StatusCode.BadRequest).send({
+      message: "incorrect transaction Pin",
+    });
+  }
+
+  return res.status(StatusCode.OK).send({
+    message: "Pin matched",
   });
+
 };

@@ -6,7 +6,7 @@ import update_phone_number from "../controllers/settings/update_phone_number";
 const router = express.Router();
 
 router.put("/settings/update_password", isAuthenticated, update_password);
-router.put("/settings/update_number" , isAuthenticated, update_phone_number)
+router.put("/settings/update_number", isAuthenticated, update_phone_number);
 
 const settings_router = router;
 export { settings_router };

@@ -11,28 +11,25 @@ const update_phone_number = async (req: Request, res: Response) => {
   const id = req?.id;
 
   try {
-
     const _validate_data = await update_number_schema.validate(req.body);
-    const { new_number , old_number  } = _validate_data;
+    const { new_number, old_number } = _validate_data;
 
-
-    //check if number matches in the DB 
+    //check if number matches in the DB
     const checkNumber = await prisma.users.findUnique({
-        where: {id}
+      where: { id },
     });
 
-    if(old_number !== checkNumber?.phoneNumber) {
-        return res.status(StatusCode.BadRequest).send({
-            message: "Current phone number dosnt match",
-          });
+    if (old_number !== checkNumber?.phoneNumber) {
+      return res.status(StatusCode.BadRequest).send({
+        message: "Current phone number dosnt match",
+      });
     }
-
 
     //update user password
     const updateNumber = await prisma.users.update({
       where: { id: id },
       data: {
-        phoneNumber: new_number ,
+        phoneNumber: new_number,
       },
     });
 

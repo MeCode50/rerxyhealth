@@ -10,11 +10,9 @@ const update_password_schema = Yup.object().shape({
     .required(),
 });
 
-
 const update_number_schema = Yup.object().shape({
   new_number: Yup.string().required(" New number is required"),
-  old_number: Yup.string().required(" Current number is required")
-})
-
+  old_number: Yup.string().required(" Current number is required"),
+});
 
 export { update_password_schema, update_number_schema };

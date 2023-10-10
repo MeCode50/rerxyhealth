@@ -16,7 +16,6 @@ model Users {
   lastName       String
   dateOfBirth    String
   country        String
-  userOption     UserOption?
   phoneNumber    String
   schoolName     String?
   email          String          @unique
@@ -25,13 +24,23 @@ model Users {
   otp            Int?
   createdAt      DateTime        @default(now()) @db.Timestamp
   updatedAt      DateTime        @updatedAt
+  isSuspended    Boolean?        @default(false)
+  isDeleted      Boolean?        @default(false)
   Wallet         Wallet?
   Bvn            Bvn[]
   SetupProfile   SetupProfile?
   Appointment    Appointment[]
   Cart           CartItem[]
   TransactionPin TransactionPin?
-  SaveProduct SaveProduct[]
+  SaveProduct    SaveProduct[]
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamp
+  updatedAt DateTime @updatedAt
 }
 
 model TransactionPin {
@@ -64,9 +73,25 @@ model SetupProfile {
 }
 
 model Appointment {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    Users  @relation(fields: [usersId], references: [id])
-  usersId String @db.ObjectId
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  day             String
+  time            String
+  hasEnded        Boolean? @default(false)
+  period          Period
+  appointmentType String
+  Doctors         Doctors  @relation(fields: [doctorsId], references: [id])
+  user            Users    @relation(fields: [usersId], references: [id])
+  usersId         String   @db.ObjectId
+  doctorsId       String   @db.ObjectId
+}
+
+//doctors schemas 
+model Doctors {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName     String
+  lastName      String
+  Appointment   Appointment[]
+  appointmentId String?       @db.ObjectId
 }
 
 model Products {
@@ -80,7 +105,7 @@ model Products {
   quantity        Int
   productCategory productCategory
   CartItem        CartItem[]
-  SaveProduct SaveProduct[]
+  SaveProduct     SaveProduct[]
 }
 
 model CartItem {
@@ -88,7 +113,7 @@ model CartItem {
   image     String
   title     String
   amount    Int
-  delivery String
+  delivery  String
   quantity  String
   userId    String   @db.ObjectId
   user      Users    @relation(fields: [userId], references: [id])
@@ -97,15 +122,15 @@ model CartItem {
 }
 
 model SaveProduct {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  image String
-  title String
-  amount Int
-  delivery String
-  userId String @db.ObjectId
-  user Users @relation(fields: [userId], references: [id])
-  productId String @db.ObjectId
-  product Products @relation(fields: [productId], references: [id])
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  image     String
+  title     String
+  amount    Int
+  delivery  String
+  userId    String   @db.ObjectId
+  user      Users    @relation(fields: [userId], references: [id])
+  productId String   @db.ObjectId
+  product   Products @relation(fields: [productId], references: [id])
 }
 
 enum productCategory {
@@ -115,8 +140,7 @@ enum productCategory {
   First_Aids_Equipment
 }
 
-enum UserOption {
-  Student
-  Professional
-  Manufacturer
+enum Period {
+  Morning
+  Evening
 }

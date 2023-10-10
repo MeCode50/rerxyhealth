@@ -6,8 +6,16 @@ import {
   getById,
 } from "../controllers/products/product_controller";
 // import { isAuthenticated } from "../middleware/isAuthenticated";
-import { createCart, getAllCart, removeCart } from "../controllers/products/cart_controller";
-import { createSave, getAllSave, removeSave } from "../controllers/products/save_controller";
+import {
+  createCart,
+  getAllCart,
+  removeCart,
+} from "../controllers/products/cart_controller";
+import {
+  createSave,
+  getAllSave,
+  removeSave,
+} from "../controllers/products/save_controller";
 
 const router = express.Router();
 
@@ -24,8 +32,8 @@ router.delete("/cart/remove/:id", removeCart);
 
 // Save Product router
 router.post("/save/create", createSave);
-router.get('/save', getAllSave);
-router.delete('/save/delete/:id', removeSave)
+router.get("/save", getAllSave);
+router.delete("/save/delete/:id", removeSave);
 
 const productRouter = router;
 export default productRouter;

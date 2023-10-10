@@ -6,9 +6,9 @@ import { validate_cart } from "../../validations/product_validation";
 const prisma = new PrismaClient();
 
 // Get all Cart Item
-const getAllCart = async(req:Request, res:Response) =>{
+const getAllCart = async (req: Request, res: Response) => {
   try {
-    const cart = await prisma.cartItem.findMany()
+    const cart = await prisma.cartItem.findMany();
     res.status(StatusCode.Found).json({
       message: "Cart Item Found",
       cart: cart,
@@ -16,30 +16,32 @@ const getAllCart = async(req:Request, res:Response) =>{
   } catch (error) {
     res.status(StatusCode.NotFound).json({ message: `Cart Item not Found` });
   }
-}
+};
 
 // Create new Cart Item
 const createCart = async (req: Request, res: Response) => {
   try {
-    const { image, title, amount, delivery, quantity } = req.body
-    const { userId, productId } = req.params
+    const { image, title, amount, delivery, quantity } = req.body;
+    const { userId, productId } = req.params;
 
     const user = await prisma.cartItem.findUnique({
       //@ts-ignore
-      where: { userId }
+      where: { userId },
     });
 
     if (!user) {
-      return res.status(StatusCode.BadRequest).json({ message: "User not Found" })
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "User not Found" });
     }
 
     const product = await prisma.cartItem.findUnique({
       //@ts-ignore
-      where: { productId }
+      where: { productId },
     });
 
     if (!product) {
-      res.status(StatusCode.NotFound).json({ message: "Product not Found" })
+      res.status(StatusCode.NotFound).json({ message: "Product not Found" });
     }
 
     await validate_cart.validate({
@@ -57,13 +59,12 @@ const createCart = async (req: Request, res: Response) => {
         title,
         amount,
         delivery,
-        quantity
+        quantity,
       },
     });
     res.status(StatusCode.Found).json({
       getAllCart: newCart,
     });
-
   } catch (err) {
     res.status(StatusCode.NotFound).json({
       message: err,
@@ -74,19 +75,19 @@ const createCart = async (req: Request, res: Response) => {
 // Remove Cart Item
 const removeCart = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params
+    const { id } = req.params;
     const removeOne = await prisma.cartItem.delete({
-      where: { id }
-    })
+      where: { id },
+    });
     res.status(StatusCode.OK).json({
       message: "Delete successfully",
       remove: removeOne,
     });
   } catch (error) {
     res.status(StatusCode.InternalServerError).json({
-      message: error
-    })
+      message: error,
+    });
   }
-}
+};
 
-export {createCart, getAllCart, removeCart}
+export { createCart, getAllCart, removeCart };

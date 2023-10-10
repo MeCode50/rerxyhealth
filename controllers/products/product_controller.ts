@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
-import { validate_product } from "../../validations/product_validation";
+import {
+  validate_cart,
+  validate_product,
+} from "../../validations/product_validation";
 
 const prisma = new PrismaClient();
 
@@ -14,9 +17,25 @@ const getAllProduct = async (req: Request, res: Response) => {
       product: product,
     });
   } catch (err) {
-    res
-      .status(StatusCode.NotFound)
-      .json({ message: `Product not Found ${err}` });
+    res.status(StatusCode.NotFound).json({ message: `Product not Found` });
+  }
+};
+
+//  Get product by ID
+const getById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const productId = await prisma.products.findUnique({
+      where: { id },
+    });
+    res.status(StatusCode.OK).json({
+      message: "Product ID Working",
+      productId: productId,
+    });
+  } catch (err) {
+    res.status(StatusCode.NotModified).json({
+      message: err,
+    });
   }
 };
 
@@ -70,7 +89,7 @@ const createProduct = async (req: Request, res: Response) => {
 // Delete Product
 const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const deleteOne = await prisma.products.delete({
       where: { id },
     });
@@ -85,4 +104,4 @@ const deleteProduct = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllProduct, createProduct, deleteProduct };
+export { getAllProduct, createProduct, deleteProduct, getById };

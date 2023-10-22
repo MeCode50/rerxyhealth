@@ -18,7 +18,7 @@ const getAllSave = async (req: Request, res: Response) => {
   }
 }
 
-// Remove Cart Item
+// Remove Save Product
 const removeSave = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
@@ -38,43 +38,55 @@ const removeSave = async (req: Request, res: Response) => {
 
 // Create new Cart Item
 const createSave = async (req: Request, res: Response) => {
-  try {
-    const { image, title, amount, delivery } = req.body
-    const { productId } = req.params
 
-    const product = await prisma.saveProduct.findUnique({
-      //@ts-ignore
-      where: { productId }
-    });
-
-    if (!product) {
-      res.status(StatusCode.NotFound).json({ message: "Product not Found" })
-    }
+  try{
+  const { image, title, amount, delivery, productId, userId } = req.body
+    const {} = req.params
 
     await validate_save.validate({
-      image,
+      productId,
+      userId,
+      image, 
       title,
-      amount,
-      delivery,
-    });
+      amount, 
+      delivery
+    })
 
-    const newSave = await prisma.saveProduct.create({
-      // @ts-ignore
+    const product = await prisma.products.findUnique({
+      where:{
+        id: productId
+      },
+    })
+
+    const user = await prisma.users.findUnique({
+      where: {
+        id: userId
+      }
+    })
+
+    if (!user || !product) {
+      res.status(StatusCode.NotFound).json({
+        message: "User or Product not found"
+      })
+    }
+
+    const SaveProduct = await prisma.saveProduct.create({
       data: {
-        productId,
         image,
         title,
         amount,
         delivery,
+        productId,
+        userId
       },
     });
     res.status(StatusCode.Found).json({
-      created: newSave,
+      save: SaveProduct
     });
 
   } catch (err) {
     res.status(StatusCode.NotFound).json({
-      message: err,
+      message: "error message",
     });
   }
 };

@@ -4,7 +4,7 @@ import {
   createUserController,
   verifyOtp,
 } from "../controllers/auth_controller";
-import { resetTransactionPin } from "../controllers/forgotten_details";
+import { resetTransactionPin } from "../controllers/users/forgotten_details";
 
 const router = express.Router();
 

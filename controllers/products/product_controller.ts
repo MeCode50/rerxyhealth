@@ -30,7 +30,7 @@ const getById = async (req: Request, res: Response) => {
     });
     res.status(StatusCode.OK).json({
       message: "Product ID Working",
-      productId: productId,
+      product: productId,
     });
   } catch (err) {
     res.status(StatusCode.NotModified).json({

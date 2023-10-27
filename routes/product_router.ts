@@ -20,9 +20,9 @@ import {
 const router = express.Router();
 
 // Product router
-router.get("/product", isAuthenticated, getAllProduct);
+router.get("/products",  getAllProduct);
 router.get("/product/:id", isAuthenticated, getById);
-router.post("/product/create", isAuthenticated, createProduct);
+router.post("/product/create",  createProduct);
 router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 // Cart router

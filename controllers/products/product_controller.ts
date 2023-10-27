@@ -12,9 +12,9 @@ const prisma = new PrismaClient();
 const getAllProduct = async (req: Request, res: Response) => {
   try {
     const product = await prisma.products.findMany();
-    res.status(StatusCode.Found).json({
+    res.status(StatusCode.Accepted).json({
       message: "Product Found",
-      product: product,
+      products: product,
     });
   } catch (err) {
     res.status(StatusCode.NotFound).json({ message: `Product not Found` });

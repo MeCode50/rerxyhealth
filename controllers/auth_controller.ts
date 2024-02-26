@@ -8,6 +8,7 @@ import {
 } from "../validations/auth_validations";
 import { signJWT } from "../helper/jwt_helper";
 import { generateOtp } from "../helper/generate_otp";
+import { sendMail } from "../services/nodemailer/mailer";
 
 const prisma = new PrismaClient();
 
@@ -68,6 +69,14 @@ const createUserController = async (req: Request, res: Response) => {
     const jwt = signJWT({
       id: id,
     });
+
+    const subject: string = 'Welcome to RexHealth 🔥';
+    const body = {
+      username: firstName, 
+      otp: createOtp
+    }
+    const template = 'email_templates/welcome'
+    await sendMail({ email, subject, body, template });
 
     return res.status(StatusCode.Created).json({
       message: "user created successfully",

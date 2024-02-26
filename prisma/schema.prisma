@@ -106,6 +106,14 @@ model Products {
   productCategory productCategory
   CartItem        CartItem[]
   SaveProduct     SaveProduct[]
+  Ratings Rating[]
+}
+
+model Rating {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  value Int
+  productId String @db.ObjectId
+  product Products @relation(fields: [productId], references: [id])
 }
 
 model CartItem {

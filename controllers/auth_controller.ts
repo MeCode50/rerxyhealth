@@ -191,10 +191,10 @@ const verifyOtp = async (req: Request, res: Response) => {
     return res.status(StatusCode.OK).json({
       message: 'Email verified successfully',
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     return res.status(StatusCode.InternalServerError).json({
-      error,
+      error: error?.message,
       message: 'An error occurred during OTP verification',
     });
   }

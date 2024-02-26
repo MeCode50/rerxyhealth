@@ -37,175 +37,165 @@ const createUserController = async (req: Request, res: Response) => {
       password,
     });
 
-    const createOtp = generateOtp();
-    const hashPassword = await bcrypt.hash(password, 10);
-
-    //check if user already exists
-    const userExisted = await prisma.users.findUnique({
+    const userExists = await prisma.users.findUnique({
       where: { email },
     });
 
-    if (userExisted) {
-      res.status(StatusCode.Found).json({
-        message: "User already exists",
+    if (userExists) {
+      return res.status(StatusCode.Found).json({
+        message: 'User already exists',
       });
     }
 
+    const createOtp = generateOtp();
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await prisma.users.create({
       data: {
-        firstName: firstName,
-        lastName: lastName,
-        dateOfBirth: dateOfBirth,
-        country: country,
-        phoneNumber: phoneNumber,
-        schoolName: schoolName,
+        firstName,
+        lastName,
+        dateOfBirth,
+        country,
+        phoneNumber,
+        schoolName,
         email: email.toLowerCase(),
-        password: hashPassword,
+        password: hashedPassword,
         otp: parseInt(createOtp),
       },
     });
 
     const { id } = newUser;
-    const jwt = signJWT({
-      id: id,
-    });
+    const jwt = signJWT({ id });
 
-    const subject: string = 'Welcome to RexHealth 🔥';
-    const body = {
-      username: firstName, 
-      otp: createOtp
-    }
-    const template = 'email_templates/welcome'
-    await sendMail({ email, subject, body, template });
+    const emailDetails = {
+      subject: 'Welcome to RexHealth 🔥',
+      body: { username: firstName, otp: createOtp },
+      template: 'email_templates/welcome',
+    };
+
+    await sendMail({ email, ...emailDetails });
+
+    const userDetails = {
+      email: newUser?.email,
+      firstName: newUser?.email,
+      lastName: newUser?.lastName,
+      dateOfBirth: newUser?.dateOfBirth,
+      country: newUser?.country,
+      phoneNumber: newUser?.phoneNumber,
+      schoolName: newUser?.schoolName,
+    };
 
     return res.status(StatusCode.Created).json({
-      message: "user created successfully",
-      jwt: jwt,
-      defails: {
-        email: newUser?.email,
-        firstName: newUser?.email,
-        lastName: newUser?.lastName,
-        dateOfBirth: newUser?.dateOfBirth,
-        country: newUser?.country,
-        phoneNumber: newUser?.phoneNumber,
-        schoolName: newUser?.schoolName,
-      },
+      message: 'User created successfully',
+      jwt,
+      details: userDetails,
       otp: createOtp,
     });
-  } catch (err) {
-    return (
-      res
-        .status(StatusCode.InternalServerError)
-        //@ts-ignore
-        .json({ message: err?.message })
-    );
+  } catch (error: any) {
+    console.error(error);
+    return res.status(StatusCode.InternalServerError).json({ message: error?.message });
   }
 };
 
 //login user controller
 const loginController = async (req: Request, res: Response) => {
   try {
-    const loginbody = req.body;
-    const loginDetails = await validate_login.validate(loginbody);
+    const { email, password } = await validate_login.validate(req.body);
 
-    const { email, password } = loginDetails;
-    const userExisted = await prisma.users.findUnique({
-      where: {
-        email: email,
-      },
+    const user = await prisma.users.findUnique({
+      where: { email },
     });
 
-    if (!userExisted) {
+    if (!user) {
       return res.status(StatusCode.NotFound).json({
-        message: "User not found",
+        message: 'User not found',
       });
     }
 
-    const matchPassword = await bcrypt.compare(password, userExisted?.password);
+    const isPasswordValid = await bcrypt.compare(password, user?.password);
 
-    if (!matchPassword) {
+    if (!isPasswordValid) {
       return res.status(StatusCode.BadRequest).json({
-        message: "Incorrect Password",
+        message: 'Incorrect Password',
       });
     }
 
-    const signToken = signJWT({
-      id: userExisted?.id,
+    const jwt = signJWT({
+      id: user?.id,
     });
 
-    //check if email address has been verified
-    //if no it returns an error
-    if (userExisted.verified === false) {
+    if (!user.verified) {
       const otp = +generateOtp();
-      const updateOtp = await prisma.users.update({
+      const updatedUser = await prisma.users.update({
         where: { email },
         data: { otp },
       });
 
-      if (!updateOtp) {
-        res.status(StatusCode.InternalServerError).json({
-          message: `Something went wrong`,
+      if (!updatedUser) {
+        return res.status(StatusCode.InternalServerError).json({
+          message: 'Something went wrong',
         });
       }
 
       return res.status(StatusCode.Forbidden).json({
-        message: `The email ${userExisted.email} is not verified, please verify email`,
-        otp: otp,
+        message: `The email ${user.email} is not verified, please verify email`,
+        otp,
       });
     }
 
-    return res
-      .status(StatusCode.OK)
-      .json({ message: "Login successful", jwt: signToken });
-  } catch (err) {
-    //@ts-ignore
-    const errMsg = err?.message;
+    return res.status(StatusCode.OK).json({
+      message: 'Login successful',
+      jwt,
+    });
+  } catch (error:any) {
+    console.error(error);
     return res.status(StatusCode.BadRequest).json({
-      error: errMsg,
+      error: error?.message,
     });
   }
 };
 
+
 //verify otp
 const verifyOtp = async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
   try {
-    const emailExists = await prisma.users.findUnique({
-      where: {
-        email,
+    const { email, otp } = req.body;
+
+    const user = await prisma.users.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(StatusCode.NotFound).json({
+        message: 'Email does not exist',
+      });
+    }
+
+    const { otp: userOtp } = user;
+    const isOtpValid = +otp === userOtp;
+
+    if (!isOtpValid) {
+      return res.status(StatusCode.BadRequest).json({
+        message: 'Invalid OTP',
+      });
+    }
+
+    // Verify email
+    await prisma.users.update({
+      where: { email },
+      data: {
+        verified: true,
       },
     });
 
-    if (!emailExists) {
-      return res.status(StatusCode.NotFound).json({
-        message: "Email dosnt exist",
-      });
-    }
-
-    const { otp: userOtp } = emailExists;
-    console.log(userOtp);
-    const matchOtp = +otp === userOtp;
-    if (!matchOtp) {
-      return res.status(StatusCode.BadRequest).json({
-        message: "Invalid OTP",
-      });
-    }
-
-    //verifigy email
-    await prisma.users
-      .update({
-        where: { email },
-        data: {
-          verified: true,
-        },
-      })
-      .then((data) => {
-        res.status(StatusCode.OK).json({
-          message: "Email verified successfully",
-        });
-      });
-  } catch (err) {
-    console.log(err);
+    res.status(StatusCode.OK).json({
+      message: 'Email verified successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(StatusCode.InternalServerError).json({
+      message: 'An error occurred during OTP verification',
+    });
   }
 };
 

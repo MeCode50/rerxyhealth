@@ -161,6 +161,12 @@ const verifyOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp } = req.body;
 
+    if (!email) {
+      return res.status(StatusCode.BadRequest).json({
+        message: 'Email is required for OTP verification',
+      });
+    }
+
     const user = await prisma.users.findUnique({
       where: { email },
     });
@@ -195,6 +201,7 @@ const verifyOtp = async (req: Request, res: Response) => {
     console.error(error);
     return res.status(StatusCode.InternalServerError).json({
       error: error?.message,
+      body: req?.body,
       message: 'An error occurred during OTP verification',
     });
   }

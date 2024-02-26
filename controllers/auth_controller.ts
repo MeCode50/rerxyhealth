@@ -147,7 +147,7 @@ const loginController = async (req: Request, res: Response) => {
       message: 'Login successful',
       jwt,
     });
-  } catch (error:any) {
+  } catch (error: any) {
     console.error(error);
     return res.status(StatusCode.BadRequest).json({
       error: error?.message,
@@ -188,12 +188,12 @@ const verifyOtp = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(StatusCode.OK).json({
+    return res.status(StatusCode.OK).json({
       message: 'Email verified successfully',
     });
   } catch (error) {
     console.error(error);
-    res.status(StatusCode.InternalServerError).json({
+    return res.status(StatusCode.InternalServerError).json({
       message: 'An error occurred during OTP verification',
     });
   }

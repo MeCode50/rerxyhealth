@@ -19,13 +19,10 @@ app.use(express.json());
 app.use(cors());
 
 // connect to mongodb
-mongoose.connect(
+mongoose.connect
   process.env.DATABASE_URL || "mongodb://localhostlocalhost:27017/rexhealth",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  },
-);
+
+
 
   mongoose.connection.on('connected', () => { // Listen for successful connection
   console.log('Connected to MongoDB');

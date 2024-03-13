@@ -4,7 +4,7 @@ import { PORT } from "./constant";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
 import cors from "cors";
-import mongoose from "mongoose";
+import mongoose, {ConnectOptions} from "mongoose";
 import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
@@ -13,25 +13,6 @@ import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
 
 require("dotenv").config();
-
-const app: Application = express();
-app.use(express.json());
-app.use(cors());
-
-// connect to mongodb
-mongoose.connect
-  process.env.DATABASE_URL || "mongodb://localhostlocalhost:27017/rexhealth",
-
-
-
-  mongoose.connection.on('connected', () => { // Listen for successful connection
-  console.log('Connected to MongoDB');
-});
-  mongoose.connection.on("error", (error: Error) => {
-    // Listen for connection errors
-    console.error("Error connecting to MongoDB:", error);
-  });
-
 //Routes handlers
 const routes = [
   authRouter,
@@ -43,6 +24,29 @@ const routes = [
   adminRouter,
   settings_router,
 ];
+
+
+const app: Application = express();
+app.use(express.json());
+app.use(cors());
+
+// Connect to MongoDB
+const url = process.env.DATABASE_URL || "mongodb://localhost:27017/rexhealth";
+const options: ConnectOptions = {}
+
+const connectDB = async () => {
+   try {
+    await mongoose.connect(url, options);
+    console.log("mongodb connected");
+  } catch (error) {
+    console.error("mongodb connection error:", error);
+    process.exit(1);  // exit the application 
+  }
+}
+
+// Call connectDB function to establish database connection
+connectDB();
+
 
 // API routes
 routes.map((items) => {

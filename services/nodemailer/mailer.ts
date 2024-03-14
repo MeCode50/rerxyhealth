@@ -1,8 +1,8 @@
 import path from "path";
 
-const nodemailer = require('nodemailer');
-require('dotenv').config();
-const handlebarsExpress = require('nodemailer-express-handlebars')
+const nodemailer = require("nodemailer");
+require("dotenv").config();
+const handlebarsExpress = require("nodemailer-express-handlebars");
 interface Nodemailer {
   email: string;
   subject: string;
@@ -10,26 +10,26 @@ interface Nodemailer {
   body: any;
 }
 
-const sendMail = ({ email, subject, body, template }: Nodemailer) => {
+const sendMail = async ({ email, subject, template, body }: Nodemailer) => {
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT || "465"), // Use default value 465 if EMAIL_PORT is undefined
+    secure: true,
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: 'jvvn cofm qvyy hkdj',
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
-
   const handlebarOptions = {
     viewEngine: {
-        partialsDir: path.resolve('./views/'),
-        defaultLayout: false,
+      partialsDir: path.resolve("./views/"),
+      defaultLayout: false,
     },
-    viewPath: path.resolve('./views/'),
-};
+    viewPath: path.resolve("./views/"),
+  };
 
-
-  transporter.use('compile', handlebarsExpress(handlebarOptions))
+  transporter.use("compile", handlebarsExpress(handlebarOptions));
 
   const mailOptions = {
     from: process.env.EMAIL_USERNAME,

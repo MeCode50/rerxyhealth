@@ -12,12 +12,14 @@ interface Nodemailer {
 
 const sendMail = async ({ email, subject, template, body }: Nodemailer) => {
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT || "465"), // Use default value 465 if EMAIL_PORT is undefined
+    service:'gmail',
+    host: "smtp.gmail.com",
+    port: 587,
+    //port: parseInt(process.env.EMAIL_PORT || "465"), // Use default value 465 if EMAIL_PORT is undefined
     secure: true,
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 

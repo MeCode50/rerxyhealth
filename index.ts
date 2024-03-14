@@ -4,7 +4,6 @@ import { PORT } from "./constant";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
 import cors from "cors";
-import mongoose, {ConnectOptions} from "mongoose";
 import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
@@ -30,8 +29,8 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-// Connect to MongoDB
-const url = process.env.DATABASE_URL || "mongodb://localhost:27017/rexhealth";
+// understanding tech business Connect to MongoDB
+/*const url = process.env.DATABASE_URL || "mongodb://localhost:27017/rexhealth";
 const options: ConnectOptions = {}
 
 const connectDB = async () => {
@@ -45,7 +44,7 @@ const connectDB = async () => {
 }
 
 // Call connectDB function to establish database connection
-connectDB();
+connectDB();*/
 
 
 // API routes

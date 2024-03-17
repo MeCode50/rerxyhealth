@@ -134,7 +134,7 @@ model CartItem {
   title     String
   amount    Int
   delivery  String
-  quantity  String
+  quantity  Int
   userId    String   @db.ObjectId
   user      Users    @relation(fields: [userId], references: [id])
   productId String   @db.ObjectId

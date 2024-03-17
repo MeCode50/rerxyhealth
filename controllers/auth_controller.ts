@@ -25,8 +25,8 @@ const createUserController = async (req: Request, res: Response) => {
       password,
       state,
       local_government,
+      city,
       street,
-      city
     } = req.body;
 
     await createUserValidation.validate({
@@ -38,6 +38,14 @@ const createUserController = async (req: Request, res: Response) => {
       schoolName,
       email,
       password,
+      /*address: {
+        street,
+        state,
+        local_government,
+        city,
+        
+    
+  }*/
     });
 
     const userExists = await prisma.users.findUnique({
@@ -64,14 +72,15 @@ const createUserController = async (req: Request, res: Response) => {
         email: email.toLowerCase(),
         password: hashedPassword,
         otp: parseInt(createOtp),
-        address: {
+        /*address: {
           create: {
+            state,
+            local_government,
             street,
             city,
-            state,
-            local_government,          
+                      
           }
-        }
+        }*/
       },
       include: {
         address:true 

@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import { validate_cart } from "../../validations/product_validation";
 
-const prisma = new PrismaClient();
 
 // Get all Cart Item
 const getAllCart = async (req: Request, res: Response) => {
@@ -23,6 +22,8 @@ const createCart = async (req: Request, res: Response) => {
   try {
     const { image, title, amount, delivery, quantity } = req.body;
     const { userId, productId } = req.params;
+    // Parse quantity as a number
+   // const quantityNumber = parseInt(quantity, 10); // Assuming base 10
 
     const user = await prisma.cartItem.findUnique({
       //@ts-ignore
@@ -59,7 +60,7 @@ const createCart = async (req: Request, res: Response) => {
         title,
         amount,
         delivery,
-        quantity,
+        quantity // Use quantityNumber here
       },
     });
     res.status(StatusCode.Found).json({

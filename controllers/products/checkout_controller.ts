@@ -1,7 +1,6 @@
-import prisma from "../../prisma";
+/*import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
-import { calculateTotalAmount } from "../../helper/priceCalculator"; 
 
 
 // Checkout Cart Items
@@ -39,4 +38,4 @@ const checkoutCart = async (req: Request, res: Response) => {
   }
 };
 
-export { checkoutCart };
+export { checkoutCart };*/

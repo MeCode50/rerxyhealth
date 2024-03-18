@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
-import { calculateSubtotal } from "../../helper/priceCalculator"; // You might need to create a utility function for calculating subtotal
+import { calculateSubtotal } from "../../helper/priceCalculator";
 
 // Function to retrieve shipping address from saved user data
 const getSavedAddress = async (userId: string) => {
@@ -12,7 +12,7 @@ const getSavedAddress = async (userId: string) => {
         id: userId,
       },
       select: {
-        address: true, 
+        address: true,
       },
     });
 
@@ -30,22 +30,30 @@ const getSavedAddress = async (userId: string) => {
 const handleShipping = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const {
-      useSavedAddress,
-      street,
-      localGovernment,
-      state,
-      totalAmount,
-      serviceFee,
-    } = req.body;
+    const { useSavedAddress, street, localGovernment, state } = req.body;
+
+    // Retrieve the cart for the user
+    const cartItems = await prisma.cartItem.findMany({
+      where: {
+        userId: parseInt(userId),
+      },
+    });
+
+    let totalAmount = 0;
+    let serviceFee = 0;
+
+    // Calculate total amount of items in the cart
+    for (const item of cartItems) {
+      totalAmount += item.amount * item.quantity;
+    }
+
+    // Calculate subtotal including shipping fees
+    const subtotal = calculateSubtotal(totalAmount, serviceFee);
 
     if (useSavedAddress) {
       // User chose to use saved address
       const savedAddress = await getSavedAddress(userId);
-      const subtotal = calculateSubtotal(
-        parseFloat(totalAmount),
-        parseFloat(serviceFee),
-      );
+
       // shipping logic using saved address and subtotal
       res.status(StatusCode.OK).json({
         message: "Using saved address for shipping",
@@ -53,34 +61,24 @@ const handleShipping = async (req: Request, res: Response) => {
         subtotal,
       });
     } else {
-      // Validate input data
-      if (
-        !street ||
-        !localGovernment ||
-        !state ||
-        !totalAmount ||
-        !serviceFee
-      ) {
+      // Validate input data for provided address
+      if (!street || !localGovernment || !state) {
         return res
           .status(StatusCode.BadRequest)
           .json({ message: "Missing required fields" });
       }
 
-      // Calculate subtotal
-      const subtotal = calculateSubtotal(
-        parseFloat(totalAmount),
-        parseFloat(serviceFee),
-      );
-
       // shipping logic using provided address and subtotal
       res.status(StatusCode.OK).json({
-        message: "Using other address for shipping",
+        message: "Using provided address for shipping",
         address: { street, localGovernment, state },
         subtotal,
       });
     }
   } catch (error) {
-    res.status(StatusCode.InternalServerError).json({ message: error });
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error handling shipping", error });
   }
 };
 

@@ -9,12 +9,12 @@ const createUserValidation = Yup.object().shape({
   schoolName: Yup.string().required(),
   email: Yup.string().email().required(),
   password: Yup.string().min(12).required(),
-  /*address: Yup.object().shape({
+  address: Yup.object().shape({
     state: Yup.string().required("State is required"),
     local_government: Yup.string().required("Local government is required"),
     city: Yup.string().required("City is required"),
     street: Yup.string().required("Street is required"),
-  }),*/
+  }),
 });
 
 const validate_login = Yup.object().shape({

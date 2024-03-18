@@ -5,6 +5,7 @@ import {
   deleteProduct,
   getById,
 } from "../controllers/products/product_controller";
+import {handleShipping} from "../controllers/products/shipping_controller"
 import { isAuthenticated } from "../middleware/isAuthenticated";
 import {
   createCart,
@@ -34,6 +35,9 @@ router.delete("/cart/remove/:id", isAuthenticated, removeCart);
 router.post("/save/create", isAuthenticated, createSave);
 router.get("/save", isAuthenticated, getAllSave);
 router.delete("/save/delete/:id", isAuthenticated, removeSave);
+
+// shipping route 
+router.post("/shipping/userId",isAuthenticated, handleShipping)
 
 const productRouter = router;
 export default productRouter;

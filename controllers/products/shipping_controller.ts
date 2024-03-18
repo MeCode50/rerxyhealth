@@ -27,7 +27,7 @@ const getSavedAddress = async (userId: string) => {
 };
 
 // Endpoint to handle shipping options
-const handleShippingOptions = async (req: Request, res: Response) => {
+const handleShipping = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const {
@@ -84,4 +84,4 @@ const handleShippingOptions = async (req: Request, res: Response) => {
   }
 };
 
-export { handleShippingOptions };
+export { handleShipping };

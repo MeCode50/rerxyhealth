@@ -29,23 +29,6 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-// understanding tech business Connect to MongoDB
-/*const url = process.env.DATABASE_URL || "mongodb://localhost:27017/rexhealth";
-const options: ConnectOptions = {}
-
-const connectDB = async () => {
-   try {
-    await mongoose.connect(url, options);
-    console.log("mongodb connected");
-  } catch (error) {
-    console.error("mongodb connection error:", error);
-    process.exit(1);  // exit the application 
-  }
-}
-
-// Call connectDB function to establish database connection
-connectDB();*/
-
 
 // API routes
 routes.map((items) => {

@@ -1,13 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
-import {
-  validate_product,
-} from "../../../validations/product_validation";
+import { validate_product } from "../../../validations/product_validation";
 
-const prisma = new PrismaClient();
-
-const adminCreateProduct = async (req: Request, res:Response) => {
+const adminCreateProduct = async (req: Request, res: Response) => {
   try {
     const {
       image,
@@ -19,7 +15,7 @@ const adminCreateProduct = async (req: Request, res:Response) => {
       quantity,
       productCategory,
     } = req.body;
-    
+
     await validate_product.validate({
       image,
       title,
@@ -41,17 +37,16 @@ const adminCreateProduct = async (req: Request, res:Response) => {
         howToUse,
         quantity,
         productCategory,
-      }
-    })
+      },
+    });
 
     res.status(StatusCode.Created).json({
       message: "Product created",
       product: adminNewProduct,
     });
-
   } catch (error) {
     res.status(StatusCode.InternalServerError);
   }
-}
+};
 
-export {adminCreateProduct}
+export { adminCreateProduct };

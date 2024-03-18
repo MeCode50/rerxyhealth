@@ -3,7 +3,6 @@ import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
 import { calculateSubtotal } from "../../helper/priceCalculator";
 
-// Function to retrieve shipping address from saved user data
 const getSavedAddress = async (userId: string) => {
   try {
     // Retrieve user's saved address from the database
@@ -26,7 +25,6 @@ const getSavedAddress = async (userId: string) => {
   }
 };
 
-// Endpoint to handle shipping options
 const handleShipping = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -47,28 +45,26 @@ const handleShipping = async (req: Request, res: Response) => {
       totalAmount += item.amount * item.quantity;
     }
 
-    // Calculate subtotal including shipping fees
+    //subtotal including shipping/ service fees
     const subtotal = calculateSubtotal(totalAmount, serviceFee);
 
     if (useSavedAddress) {
-      // User chose to use saved address
       const savedAddress = await getSavedAddress(userId);
 
-      // shipping logic using saved address and subtotal
+      // logic using saved address and subtotal
       res.status(StatusCode.OK).json({
         message: "Using saved address for shipping",
         address: savedAddress,
         subtotal,
       });
     } else {
-      // Validate input data for provided address
+      // Validate the  input data for provided address
       if (!street || !localGovernment || !state) {
         return res
           .status(StatusCode.BadRequest)
           .json({ message: "Missing required fields" });
       }
 
-      // shipping logic using provided address and subtotal
       res.status(StatusCode.OK).json({
         message: "Using provided address for shipping",
         address: { street, localGovernment, state },

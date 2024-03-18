@@ -1,7 +1,7 @@
 import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
-import { calculateTotalAmount } from "../../helper/priceCalculator"; // Assuming a function to calculate total amount
+import { calculateTotalAmount } from "../../helper/priceCalculator"; 
 
 
 // Checkout Cart Items
@@ -21,9 +21,7 @@ const checkoutCart = async (req: Request, res: Response) => {
     // Calculate total amount
     const totalAmount = calculateTotalAmount(cartItems);
 
-    // Additional logic for applying discounts, taxes, etc. can be implemented here
 
-    // Assuming processing payment logic here
 
     // Clear the cart after successful checkout
     await prisma.cartItem.deleteMany({

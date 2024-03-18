@@ -1,4 +1,4 @@
-import { CartItem } from "./type"; // Assuming you have a CartItem type defined
+import { CartItem } from "./type"; 
 
 // Function to calculate total amount based on cart items
 const calculateTotalAmount = (cartItems: CartItem[]): number => {
@@ -6,7 +6,7 @@ const calculateTotalAmount = (cartItems: CartItem[]): number => {
 
   // Iterate through each cart item and sum up the total amount
   cartItems.forEach((item) => {
-    totalAmount += item.amount * item.quantity; // Assuming 'amount' is the price of the product
+    totalAmount += item.amount * item.quantity; 
   });
 
   return totalAmount;

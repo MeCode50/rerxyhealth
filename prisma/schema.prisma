@@ -62,6 +62,16 @@ model TransactionPin {
   usersId String @unique @db.ObjectId
 }
 
+model TransactionHistory {
+    id              String      @id @default(auto()) @map("_id") @db.ObjectId
+    email           String      @unique
+    paystack_ref    String
+    payment_status  String
+    time_paid       DateTime    @default(now()) @db.Timestamp 
+    date_paid       DateTime    @default(now()) @db.Timestamp 
+    
+}
+
 model Wallet {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
   balance Int    @default(0)

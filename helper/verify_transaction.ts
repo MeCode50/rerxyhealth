@@ -2,7 +2,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 //function to verify transaction with paystack 
-async function verifyTransaction(reference:string) {
+export async function verifyTransaction(reference:string) {
     try {
         const response = await axios.get('${process.env.PAYSTACK_VERIFY_URL}/${reference}', {
             headers: {
@@ -15,4 +15,5 @@ async function verifyTransaction(reference:string) {
         throw error;
     }
 }
+
 

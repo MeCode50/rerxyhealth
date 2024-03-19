@@ -1,4 +1,3 @@
-// types.ts
 
 interface CartItem {
   id: string; // Unique identifier for the cart item

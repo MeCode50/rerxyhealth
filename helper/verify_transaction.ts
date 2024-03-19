@@ -1,6 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 
+
 //function to verify transaction with paystack 
 export async function verifyTransaction(reference:string) {
     try {

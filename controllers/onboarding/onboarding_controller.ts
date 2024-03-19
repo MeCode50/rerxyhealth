@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Response, Request } from "express";
 import { StatusCode } from "../../enums/status";
-
-const prisma = new PrismaClient();
 
 const createTransactionPin = async (req: Request, res: Response) => {
   const { pin } = req.body;

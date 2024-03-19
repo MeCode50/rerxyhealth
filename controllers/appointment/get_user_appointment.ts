@@ -1,8 +1,7 @@
 import { Response, Request } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
 
-const prisma = new PrismaClient();
 
 export const getUsersAppointment = async (req: Request, res: Response) => {
   //@ts-ignore

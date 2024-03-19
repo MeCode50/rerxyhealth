@@ -1,8 +1,8 @@
 
 /**
- * @param totalAmount The total amount of items in the cart.
- * @param additionalFee Any additional fees, such as shipping fees.
- * @returns The calculated subtotal.
+ * @param totalAmount 
+ * @param additionalFee 
+ * @returns 
  */
 const calculateSubtotal = (
   totalAmount: number,

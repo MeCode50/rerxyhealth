@@ -3,12 +3,10 @@ import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 
 
-// Checkout Cart Items
 const checkoutCart = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    // Fetch cart items for the user
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
     });
@@ -17,12 +15,10 @@ const checkoutCart = async (req: Request, res: Response) => {
       return res.status(StatusCode.NotFound).json({ message: "Cart is empty" });
     }
 
-    // Calculate total amount
     const totalAmount = calculateTotalAmount(cartItems);
 
 
 
-    // Clear the cart after successful checkout
     await prisma.cartItem.deleteMany({
       where: { userId },
     });

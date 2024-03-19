@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { validate_completeProfile } from "../../validations/onboarding";
 import { StatusCode } from "../../enums/status";
@@ -7,7 +7,6 @@ const completeProfile = async (req: Request, res: Response) => {
   const toValidate = req.body;
   //@ts-ignore
   const userId = req?.id;
-  const prisma = new PrismaClient();
 
   try {
     const validations = await validate_completeProfile.validate(toValidate);

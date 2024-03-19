@@ -37,8 +37,7 @@ const handleShipping = async (req: Request, res: Response) => {
       transactionReference,
     } = req.body; 
 
-    // Retrieve the cart for the user
-    const cartItems = await prisma.cartItem.findMany({
+      const cartItems = await prisma.cartItem.findMany({
       where: {
         userId: userId,
       },
@@ -54,15 +53,12 @@ const handleShipping = async (req: Request, res: Response) => {
 
     //  transaction verification
     const transactionDetails = await verifyTransaction(transactionReference); 
-
-    // if transaction verification was successful
     if (transactionDetails && transactionDetails.status) {
       // proceed with shipping 
       let subtotal = calculateSubtotal(totalAmount, serviceFee);
 
       if (useSavedAddress) {
         const savedAddress = await getSavedAddress(userId);
-
         // using saved address and subtotal
         res.status(StatusCode.OK).json({
           message: "Using saved address for shipping",
@@ -70,7 +66,6 @@ const handleShipping = async (req: Request, res: Response) => {
           subtotal,
         });
       } else {
-        // Validate the input data for provided address
         if (!street || !localGovernment || !state) {
           return res
             .status(StatusCode.BadRequest)
@@ -84,8 +79,7 @@ const handleShipping = async (req: Request, res: Response) => {
         });
       }
     } else {
-      // Transaction verification failed
-      res
+        res
         .status(StatusCode.BadRequest)
         .json({ message: "Transaction verification failed" });
     }

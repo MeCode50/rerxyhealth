@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { update_password_schema } from "../../validations/settings_validations";
 import { StatusCode } from "../../enums/status";
 import { compare } from "bcrypt";
 const bcrypt = require("bcrypt");
-const prisma = new PrismaClient();
 
 const update_password = async (req: Request, res: Response) => {
   //@ts-ignore

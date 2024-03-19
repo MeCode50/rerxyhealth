@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import {
   validate_cart,
   validate_product,
 } from "../../validations/product_validation";
-
-const prisma = new PrismaClient();
 
 // Get all Product
 const getAllProduct = async (req: Request, res: Response) => {

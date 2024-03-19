@@ -1,10 +1,9 @@
 //this function helps to get user profile
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../prisma";
 import { StatusCode } from "../enums/status";
 
 export const getUserProfile = async (req: Request, res: Response) => {
-  const prisma = new PrismaClient();
   //@ts-ignore
   const id = req?.id;
 
@@ -35,7 +34,6 @@ export const getUserProfile = async (req: Request, res: Response) => {
 //function to handle profile edit
 
 export const updateUserProfile = async (req: Request, res: Response) => {
-  const prisma = new PrismaClient();
   //@ts-ignore
   const id = req?.id;
 

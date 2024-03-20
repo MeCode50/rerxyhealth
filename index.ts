@@ -10,6 +10,7 @@ import walletRouter from "./routes/wallet_routes";
 import { appointmentRouter } from "./routes/appointment_route";
 import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
+import  VerifyTrans  from "./routes/testroute";
 
 require("dotenv").config();
 //Routes handlers
@@ -22,6 +23,7 @@ const routes = [
   appointmentRouter,
   adminRouter,
   settings_router,
+  VerifyTrans,
 ];
 
 

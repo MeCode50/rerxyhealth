@@ -40,7 +40,7 @@ const handleShipping = async (req: Request, res: Response) => {
       const cartItems = await prisma.cartItem.findMany({
       where: {
         userId: userId,
-      },
+    },
     });
 
     let totalAmount = 0;
@@ -87,7 +87,7 @@ const handleShipping = async (req: Request, res: Response) => {
     res
       .status(StatusCode.InternalServerError)
       .json({ message: "Error handling shipping", error });
-  }
-};
+    }
+    };
 
 export { handleShipping };

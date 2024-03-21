@@ -39,3 +39,20 @@ const getAllDiagnosticTest = async (req: Request, res: Response) => {
     }
 };
 
+// retrieve a test by Id
+const getTestById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+// retrieve a single test 
+        const diagnosticTest = await prisma.diagnosticTest.findUnique({
+            where:
+                { id, }, include: { category: true, }
+        });
+        if (!diagnosticTest) {
+            return res.status(StatusCode.NotFound).json({ message: "Diagnostic test not found" });
+        }res.status(StatusCode.OK).json({ diagnosticTest });
+    } catch (error) {
+        res.status(StatusCode.InternalServerError).json({message:"Error retrieving diagnostic test", error})              
+    }
+}
+

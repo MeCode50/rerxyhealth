@@ -175,3 +175,23 @@ enum Period {
   Evening
 }
 
+
+
+// Category model
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  shortcode   String
+  dateCreated DateTime  @default(now())
+  tests       DiagnosticTest[]
+}
+
+// DiagnosticTest model
+model DiagnosticTest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Int
+  dateCreated DateTime  @default(now())
+  category    Category  @relation(fields: [categoryId], references: [id])
+  categoryId  String   @db.ObjectId
+}

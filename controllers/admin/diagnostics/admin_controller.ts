@@ -25,3 +25,17 @@ const createDiagnosticTest = async (req: Request, res: Response) => {
         res.status(StatusCode.InternalServerError).json({ message: "Error creating diagnostic test", error })
     }
 };
+// retrieve all diagnostic tests
+const getAllDiagnosticTest = async (req: Request, res: Response) => {
+    try {
+        const diagnosticTests = await prisma.diagnosticTest.findMany({
+            include: {
+                category: true,
+            },
+        });
+        res.status(StatusCode.OK).json({ diagnosticTests });
+    } catch (error) {
+        res.status(StatusCode.InternalServerError).json({ message: 'Error retrieving the diagnostic tests', error })
+    }
+};
+

@@ -174,9 +174,6 @@ enum Period {
   Morning
   Evening
 }
-
-
-
 // Category model
 model Category {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId

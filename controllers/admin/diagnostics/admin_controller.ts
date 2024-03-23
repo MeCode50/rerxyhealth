@@ -5,12 +5,13 @@ import { StatusCode } from "../../../enums/status";
 // create test 
 const createDiagnosticTest = async (req: Request, res: Response) => {
     try {
-        const { name, price, categoryId } = req.body;
+        const { name, price, categoryId, type} = req.body;
 
         //validate data entered 
-        if (!name || !price || !categoryId) {
+        if (!name || !price || !categoryId || !type) {
             return res.status(StatusCode.BadRequest).json({ message: 'Missing required field' });
         }
+    
 
         // create test 
         const diagnosticTest = await prisma.diagnosticTest.create({
@@ -18,6 +19,7 @@ const createDiagnosticTest = async (req: Request, res: Response) => {
                 name,
                 price,
                 categoryId,
+                type,
             },
         });
         res.status(StatusCode.Created).json({ diagnosticTest });
@@ -61,11 +63,11 @@ const updatedTestById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         //update a single test 
-        const { name, price, categoryId } = req.body;
+        const { name, price, categoryId, type } = req.body;
 
         const updateTest = await prisma.diagnosticTest.update({
             where: { id, },
-            data: { name, price, categoryId },
+            data: { name, price, categoryId , type},
             include: { category: true, },
         });
         res.status(StatusCode.OK).json({ updateTest })

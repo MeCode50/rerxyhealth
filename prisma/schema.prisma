@@ -191,4 +191,5 @@ model DiagnosticTest {
   dateCreated DateTime  @default(now())
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  String   @db.ObjectId
+  type        String 
 }

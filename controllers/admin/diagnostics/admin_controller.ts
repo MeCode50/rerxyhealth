@@ -56,3 +56,42 @@ const getTestById = async (req: Request, res: Response) => {
     }
 }
 
+//update a test by Id
+const updatedTestById = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        //update a single test 
+        const { name, price, categoryId } = req.body;
+
+        const updateTest = await prisma.diagnosticTest.update({
+            where: { id, },
+            data: { name, price, categoryId },
+            include: { category: true, },
+        });
+        res.status(StatusCode.OK).json({ updateTest })
+    } catch (error) {
+        res.status(StatusCode.InternalServerError).json({ message: "failed to update test", error })
+        
+    }
+}
+
+// delete test by id 
+const deleteTestBtId = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        // delete test from database
+        await prisma.diagnosticTest.delete({ where: { id, } });
+        res.status(StatusCode.OK).json({ message: "diagnostic test deleted" })
+    } catch (error) {
+        res.status(StatusCode.InternalServerError).json({ message: 'Error deleting test', error })
+    }
+};
+
+export {
+  createDiagnosticTest,
+  getAllDiagnosticTest,
+  getTestById,
+  updatedTestById,
+  deleteTestBtId,
+};

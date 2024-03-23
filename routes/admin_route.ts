@@ -22,5 +22,8 @@ app.post("/admin/product/create", adminCreateProduct)
 app.get("/admin/product/all", adminGetProduct)
 app.delete("/admin/product/delete/:id", adminDeleteProduct)
 
+// diagnostic test section 
+
+
 const adminRouter = app;
 export default adminRouter;

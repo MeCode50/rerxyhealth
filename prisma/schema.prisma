@@ -192,4 +192,18 @@ model DiagnosticTest {
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  String   @db.ObjectId
   type        String 
+  selectedTests  SelectedTest[]
+
 }
+
+model SelectedTest {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  testName       String
+  price          Int
+  quantity       Int
+  userId         String    
+  diagnosticTest DiagnosticTest @relation(fields: [diagnosticTestId], references: [id])
+  diagnosticTestId String @db.ObjectId 
+}
+
+

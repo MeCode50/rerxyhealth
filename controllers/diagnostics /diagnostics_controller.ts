@@ -1,58 +1,26 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
-import { calculateSubtotal } from "../../helper/priceCalculator";
-
-const getSavedAddress = async (userId: string) => {
-  try {
-    // Retrieve user's saved address from the database
-    const user = await prisma.users.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        address: true,
-      },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return user.address;
-  } catch (error) {
-    throw error;
-  }
-};
 
 const handleDiagnosticTests = async (req: Request, res: Response) => {
   try {
-      // Logic to display diagnostic tests options (regular and premium tests) to the user
-      const regularTests = await prisma.diagnosticTest.findMany({
-        where: { type: "regular" }, 
-        select: { name: true, price: true },
-      });
+    // Retrieve regular tests
+    const regularTests = await prisma.diagnosticTest.findMany({
+      where: { type: "regular" },
+      select: { id: true, name: true, price: true },
+    });
 
-      const premiumTests = await prisma.diagnosticTest.findMany({
-        where: { type: "premium" }, 
-        select: { name: true, price: true },
-      });
-      // Return list of regular and premium tests with their prices
-       const regularTestsWithPrices = regularTests.map((test) => ({
-         name: test.name,
-         price: test.price,
-       }));
+    // Retrieve premium tests
+    const premiumTests = await prisma.diagnosticTest.findMany({
+      where: { type: "premium" },
+      select: { id: true, name: true, price: true },
+    });
 
-       const premiumTestsWithPrices = premiumTests.map((test) => ({
-         name: test.name,
-         price: test.price,
-       }));
-
-       // Return the structured data as a response
-       res.status(StatusCode.OK).json({
-         regularTests: regularTestsWithPrices,
-         premiumTests: premiumTestsWithPrices,
-       });
+    // Return list of regular and premium tests with their details
+    res.status(StatusCode.OK).json({
+      regularTests,
+      premiumTests,
+    });
   } catch (error) {
     res
       .status(StatusCode.InternalServerError)
@@ -60,87 +28,59 @@ const handleDiagnosticTests = async (req: Request, res: Response) => {
   }
 };
 
-const handleSelectedTests = async (req: Request, res: Response) => {
+const addSelectedTest = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
+    const { userId, diagnosticTestId, quantity } = req.body;
 
-    // Retrieve the selected tests for the user from the database
-    const selectedTests = await prisma.selectedTest.findMany({
-      where: {
+    // Check if the user and diagnostic test exist
+    const user = await prisma.users.findUnique({
+      where: { id: userId },
+    });
+    const diagnosticTest = await prisma.diagnosticTest.findUnique({
+      where: { id: diagnosticTestId },
+      include: { category: true }, 
+    });
+
+    if (!user || !diagnosticTest) {
+      return res
+        .status(StatusCode.NotFound)
+        .json({ message: "User or diagnostic test not found" });
+    }
+
+    // Add the selected test to the database
+    const selectedTest = await prisma.selectedTest.create({
+      data: {
         userId: userId,
-      },
-      include: {
-        diagnosticTest: true, 
+        testName: diagnosticTest.name, 
+        price: diagnosticTest.price, 
+        quantity: quantity,
+        diagnosticTestId: diagnosticTestId,
       },
     });
 
-    // Calculate total amount based on selected tests
-    let totalAmount = 0;
-    for (const selectedTest of selectedTests) {
-      totalAmount += selectedTest.diagnosticTest.price * selectedTest.quantity;
-    }
-
-    // Return list of selected tests and total amount
-    res.status(StatusCode.OK).json({
-      selectedTests: selectedTests.map((test) => ({
-        name: test.diagnosticTest.name,
-        price: test.diagnosticTest.price,
-        quantity: test.quantity,
-      })),
-      totalAmount: totalAmount,
-    });
+    res.status(StatusCode.Created).json(selectedTest);
   } catch (error) {
     res
       .status(StatusCode.InternalServerError)
-      .json({ message: "Error handling selected tests", error });
+      .json({ message: "Error adding selected test", error });
   }
 };
 
-const handleTreatmentOptions = async (req:Request ,res:Response) => {
+const removeSelectedTest = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
-    const { useSavedAddress, street, localGovernment, state, selectedTests } =
-      req.body;
+    const selectedTestId = req.params.selectedTestId;
 
-    // Calculate total amount of selected tests
-      let totalAmount = 0;
-      let serviceFee = 0;
-    for (const test of selectedTests) {
-      totalAmount += test.price * test.quantity;
-    }
+    // Delete the selected test from the user's cart
+    await prisma.selectedTest.delete({
+      where: { id: selectedTestId },
+    });
 
-    // Calculate subtotal including shipping/service fees
-    const subtotal = calculateSubtotal(totalAmount, serviceFee);
-
-    if (useSavedAddress) {
-      const savedAddress = await getSavedAddress(userId);
-
-      // Logic using saved address and subtotal
-      res.status(StatusCode.OK).json({
-        message: "Using saved address for shipping",
-        address: savedAddress,
-        subtotal,
-      });
-    } else {
-      // Validate the input data for provided address
-      if (!street || !localGovernment || !state) {
-        return res
-          .status(StatusCode.BadRequest)
-          .json({ message: "Missing required fields" });
-      }
-
-      res.status(StatusCode.OK).json({
-        message: "Using provided address for shipping",
-        address: { street, localGovernment, state },
-        subtotal,
-      });
-    }
+    res.status(StatusCode.OK).json({ message: "Selected test deleted" });
   } catch (error) {
     res
       .status(StatusCode.InternalServerError)
-      .json({ message: "Error handling treatment options", error });
+      .json({ message: "Error removing selected test", error });
   }
 };
 
-
-export { handleDiagnosticTests, handleSelectedTests, handleTreatmentOptions };
+export { handleDiagnosticTests, addSelectedTest, removeSelectedTest };

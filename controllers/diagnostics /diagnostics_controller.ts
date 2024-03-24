@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
+import { handleCheckout } from "./checkout";
 
 const handleDiagnosticTests = async (req: Request, res: Response) => {
   try {

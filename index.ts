@@ -11,6 +11,7 @@ import { appointmentRouter } from "./routes/appointment_route";
 import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
 import  VerifyTrans  from "./routes/testroute";
+import diagnosticsRouter from "./routes/diagnostics_routes";
 
 require("dotenv").config();
 //Routes handlers
@@ -24,6 +25,7 @@ const routes = [
   adminRouter,
   settings_router,
   VerifyTrans,
+  diagnosticsRouter
 ];
 
 

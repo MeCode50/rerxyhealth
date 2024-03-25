@@ -38,14 +38,14 @@ const createUserController = async (req: Request, res: Response) => {
       schoolName,
       email,
       password,
-      /*address: {
+      address: {
         street,
         state,
         local_government,
         city,
         
     
-  }*/
+  }
     });
 
     const userExists = await prisma.users.findUnique({
@@ -72,7 +72,7 @@ const createUserController = async (req: Request, res: Response) => {
         email: email.toLowerCase(),
         password: hashedPassword,
         otp: parseInt(createOtp),
-        /*address: {
+        address: {
           create: {
             state,
             local_government,
@@ -80,7 +80,7 @@ const createUserController = async (req: Request, res: Response) => {
             city,
                       
           }
-        }*/
+        }
       },
       include: {
         address:true 
@@ -107,7 +107,7 @@ const createUserController = async (req: Request, res: Response) => {
       country: newUser?.country,
       phoneNumber: newUser?.phoneNumber,
       schoolName: newUser?.schoolName,
-      address: newUser?.address, //
+      address: newUser?.address, 
     };
 
     return res.status(StatusCode.Created).json({

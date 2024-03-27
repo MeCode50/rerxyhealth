@@ -42,6 +42,9 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       where: { id },
       data: {
         ...req?.body,
+        address: {
+          update: req?.body.address, 
+        },
       },
     });
 

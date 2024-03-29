@@ -53,14 +53,20 @@ const createProduct = async (req: Request, res: Response) => {
     } = req.body;
 
     // Check if a file is provided in the request
-    if (!req.file) {
+    /*if (!req.file) {
       return res
         .status(StatusCode.BadRequest)
         .json({ message: "No file uploaded" });
     }
 
     // upload image to cloudinary
+        .status(StatusCode.BadRequest)
+        .json({ message: "No file uploaded" });
+    }
+
+    // upload image to cloudinary
     const imageUrl = await uploadToCloudinary(req.file);
+    const imageUrl = await uploadToCloudinary(req.file);*/
 
     await validate_product.validate({
       image,

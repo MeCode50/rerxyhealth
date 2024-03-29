@@ -12,7 +12,8 @@ import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
 import  VerifyTrans  from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
-import upload from "./middleware/multer"
+import imageRouter from "./routes/image_routes";
+
 
 require("dotenv").config();
 //Routes handlers
@@ -33,6 +34,10 @@ const routes = [
 const app: Application = express();
 app.use(express.json());
 app.use(cors());
+
+
+// Use the image upload route
+app.use("/api/images", imageRouter);
 
 
 // API routes

@@ -17,14 +17,14 @@ import {
   getAllSave,
   removeSave,
 } from "../controllers/products/save_controller";
-import upload from "../middleware/multer"; 
+
 
 
 const router = express.Router();
 
 // create and delete product images 
-router.post("/product/create", isAuthenticated, upload.single("image"), createProduct);
-router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
+//router.post("/product/create", isAuthenticated, upload.single("image"), createProduct);
+//router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 // Product router
 router.get("/products",  getAllProduct);

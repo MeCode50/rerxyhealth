@@ -10,7 +10,9 @@ import {createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
   updatedTestById,
-  deleteTestBtId,} from "../controllers/admin/diagnostics/admin_controller"
+  deleteTestBtId,
+} from "../controllers/admin/diagnostics/admin_controller"
+
 
 const app = express.Router();
 
@@ -21,6 +23,10 @@ app.put("/admin/users/edit/:id", updateUser);
 //appoint section
 app.get("/admin/appointment/all", admin_get_all_appointments);
 
+
+// create and delete product images 
+//router.post("/product/create", isAuthenticated, upload.single("image"), createProduct);
+//router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 //product section 
 app.post("/admin/product/create", adminCreateProduct)

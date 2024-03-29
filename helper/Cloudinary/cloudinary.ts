@@ -7,7 +7,7 @@ dotenv.config();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Function to handle file upload to Cloudinary
@@ -22,7 +22,7 @@ export async function uploadToCloudinary(
 
     // Upload the file to Cloudinary
     const result = await cloudinary.uploader.upload(file.path, {
-      folder: "YOUR_CLOUDINARY_FOLDER_NAME",
+      folder: "RexHealth",
       allowed_formats: ["jpg", "jpeg", "png"],
     });
 

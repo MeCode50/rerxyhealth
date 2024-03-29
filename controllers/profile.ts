@@ -43,7 +43,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       data: {
         ...req?.body,
         address: {
-          update: req?.body.address, 
+          update: [req?.body.address], 
         },
       },
     });
@@ -61,3 +61,4 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     return res.status(StatusCode.InternalServerError).json({ error: err });
   }
 };
+// come back and fix update profil e postman documentation 

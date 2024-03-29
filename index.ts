@@ -12,6 +12,7 @@ import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
 import  VerifyTrans  from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
+import upload from "./middleware/multer"
 
 require("dotenv").config();
 //Routes handlers

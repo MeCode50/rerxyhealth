@@ -5,6 +5,7 @@ import {
   validate_cart,
   validate_product,
 } from "../../validations/product_validation";
+import { uploadToCloudinary } from "../../helper/Cloudinary/cloudinary";
 
 // Get all Product
 const getAllProduct = async (req: Request, res: Response) => {
@@ -50,6 +51,16 @@ const createProduct = async (req: Request, res: Response) => {
       quantity,
       productCategory,
     } = req.body;
+
+    // Check if a file is provided in the request
+    if (!req.file) {
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "No file uploaded" });
+    }
+
+    // upload image to cloudinary
+    const imageUrl = await uploadToCloudinary(req.file);
 
     await validate_product.validate({
       image,

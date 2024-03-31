@@ -33,7 +33,7 @@ router.post("/product/create",  createProduct);
 router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 // Cart router
-router.post("/cart/create", isAuthenticated, createCart);
+router.post("/cart/create/:userId/:productId", isAuthenticated, createCart);
 router.get("/cart", isAuthenticated, getAllCart);
 router.delete("/cart/remove/:id", isAuthenticated, removeCart);
 

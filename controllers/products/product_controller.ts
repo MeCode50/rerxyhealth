@@ -120,3 +120,5 @@ const deleteProduct = async (req: Request, res: Response) => {
 };
 
 export { getAllProduct, createProduct, deleteProduct, getById };
+  
+  

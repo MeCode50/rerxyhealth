@@ -5,7 +5,7 @@ import {
   deleteProduct,
   getById,
 } from "../controllers/products/product_controller";
-import {handleShipping} from "../controllers/products/shipping_controller"
+import { handleShipping } from "../controllers/products/shipping_controller";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 import {
   createCart,
@@ -18,18 +18,16 @@ import {
   removeSave,
 } from "../controllers/products/save_controller";
 
-
-
 const router = express.Router();
 
-// create and delete product images 
+// create and delete product images
 //router.post("/product/create", isAuthenticated, upload.single("image"), createProduct);
 //router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 // Product router
-router.get("/products",  getAllProduct);
+router.get("/products", getAllProduct);
 router.get("/product/:id", isAuthenticated, getById);
-router.post("/product/create",  createProduct);
+router.post("/product/create", createProduct);
 router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
 
 // Cart router
@@ -42,8 +40,8 @@ router.post("/save/create", isAuthenticated, createSave);
 router.get("/save", isAuthenticated, getAllSave);
 router.delete("/save/delete/:id", isAuthenticated, removeSave);
 
-// shipping route 
-router.post("/shipping/userId",isAuthenticated, handleShipping)
+// shipping route
+router.post("/shipping/:userId", isAuthenticated, handleShipping);
 
 const productRouter = router;
 export default productRouter;

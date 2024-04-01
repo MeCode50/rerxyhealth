@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
 import { calculateSubtotal } from "../../helper/priceCalculator";
-import { verifyTransaction } from "../../helper/verify_transaction"; 
+import { verifyTransaction } from "../../helper/verify_transaction";
 
 const getSavedAddress = async (userId: string) => {
   try {
@@ -35,12 +35,12 @@ const handleShipping = async (req: Request, res: Response) => {
       localGovernment,
       state,
       transactionReference,
-    } = req.body; 
+    } = req.body;
 
-      const cartItems = await prisma.cartItem.findMany({
+    const cartItems = await prisma.cartItem.findMany({
       where: {
         userId: userId,
-    },
+      },
     });
 
     let totalAmount = 0;
@@ -52,16 +52,16 @@ const handleShipping = async (req: Request, res: Response) => {
     }
 
     //  transaction verification
-    const transactionDetails = await verifyTransaction(transactionReference); 
+    const transactionDetails = await verifyTransaction(transactionReference);
     if (transactionDetails && transactionDetails.status) {
-      // proceed with shipping 
+      // proceed with shipping
       let subtotal = calculateSubtotal(totalAmount, serviceFee);
 
       if (useSavedAddress) {
         const savedAddress = await getSavedAddress(userId);
         // using saved address and subtotal
         res.status(StatusCode.OK).json({
-          message: "Using saved address for shipping",
+          message: "Payment successful",
           address: savedAddress,
           subtotal,
         });
@@ -73,13 +73,13 @@ const handleShipping = async (req: Request, res: Response) => {
         }
 
         res.status(StatusCode.OK).json({
-          message: "Using provided address for shipping",
+          message: "Payment successsful",
           address: { street, localGovernment, state },
           subtotal,
         });
       }
     } else {
-        res
+      res
         .status(StatusCode.BadRequest)
         .json({ message: "Transaction verification failed" });
     }
@@ -87,7 +87,7 @@ const handleShipping = async (req: Request, res: Response) => {
     res
       .status(StatusCode.InternalServerError)
       .json({ message: "Error handling shipping", error });
-    }
-    };
+  }
+};
 
 export { handleShipping };

@@ -12,12 +12,12 @@ import {createDiagnosticTest,
   updatedTestById,
   deleteTestBtId,
 } from "../controllers/admin/diagnostics/admin_controller"
-
+  
 
 const app = express.Router();
 
 app.get("/admin/users/all", getAllUsers);
-app.put("/admin/users/delete/:id", deleteUser);
+app.delete("/admin/users/delete/:id", deleteUser);
 app.put("/admin/users/edit/:id", updateUser);
 
 //appoint section

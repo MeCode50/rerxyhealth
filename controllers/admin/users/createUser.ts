@@ -1,11 +1,10 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import prisma from "../../../prisma"
 import { createUserValidation } from "../../../validations/auth_validations";
 import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
 import { generateOtp } from "../../../helper/generate_otp";
 import { signJWT } from "../../../helper/jwt_helper";
 const bcrypt = require("bcrypt");
-const prisma = new PrismaClient();
 
 const adminCreateUser = async (req: Request, res: Response) => {
   try {

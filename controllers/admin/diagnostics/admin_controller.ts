@@ -4,29 +4,43 @@ import { StatusCode } from "../../../enums/status";
 
 // create test 
 const createDiagnosticTest = async (req: Request, res: Response) => {
-    try {
-        const { name, price, categoryId, type} = req.body;
+  try {
+    const { name, price, category, type } = req.body;
 
-        //validate data entered 
-        if (!name || !price || !categoryId || !type) {
+    //validate data entered 
+        if (!name || !price || !category || !type) {
             return res.status(StatusCode.BadRequest).json({ message: 'Missing required field' });
         }
-    
 
-        // create test 
-        const diagnosticTest = await prisma.diagnosticTest.create({
-            data: {
-                name,
-                price,
-                categoryId,
-                type,
-            },
-        });
-        res.status(StatusCode.Created).json({ diagnosticTest });
-    } catch (error) {
-        res.status(StatusCode.InternalServerError).json({ message: "Error creating diagnostic test", error })
+    // Find the category by its name
+    const findCategory = await prisma.category.findUnique({
+      where: { name: category },
+    });
+
+    if (!findCategory) {
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "Category not found" });
     }
+
+    // Create the diagnostic test
+    const diagnosticTest = await prisma.diagnosticTest.create({
+      data: {
+        name,
+        price,
+        categoryName: category,
+        type,
+      },
+    });
+
+    res.status(StatusCode.Created).json({ diagnosticTest });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error creating diagnostic test", error });
+  }
 };
+
 // retrieve all diagnostic tests
 const getAllDiagnosticTest = async (req: Request, res: Response) => {
     try {
@@ -59,7 +73,7 @@ const getTestById = async (req: Request, res: Response) => {
 }
 
 //update a test by Id
-const updatedTestById = async (req: Request, res: Response) => {
+/*const updatedTestById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         //update a single test 
@@ -75,7 +89,7 @@ const updatedTestById = async (req: Request, res: Response) => {
         res.status(StatusCode.InternalServerError).json({ message: "failed to update test", error })
         
     }
-}
+}*/
 
 // delete test by id 
 const deleteTestBtId = async (req: Request, res: Response) => {
@@ -94,6 +108,8 @@ export {
   createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
-  updatedTestById,
+  //updatedTestById,
   deleteTestBtId,
 };
+
+

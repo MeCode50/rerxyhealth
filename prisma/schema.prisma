@@ -177,7 +177,7 @@ enum Period {
 // Category model
 model Category {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
+  name        String @unique
   shortcode   String
   dateCreated DateTime  @default(now())
   tests       DiagnosticTest[]
@@ -189,8 +189,8 @@ model DiagnosticTest {
   name        String
   price       Int
   dateCreated DateTime  @default(now())
-  category    Category  @relation(fields: [categoryId], references: [id])
-  categoryId  String   @db.ObjectId
+  category     Category  @relation(fields: [categoryName], references: [name])
+  categoryName  String   @db.ObjectId
   type        String 
   selectedTests  SelectedTest[]
 

@@ -29,21 +29,58 @@ const handleDiagnosticTests = async (req: Request, res: Response) => {
   }
 };
 
+const createDiagnosticTest = async (req: Request, res: Response) => {
+  try {
+    const { name, price, category, type } = req.body;
+
+    // Check if the provided test type is valid
+    if (type !== "regular" && type !== "premium") {
+      return res.status(StatusCode.BadRequest).json({
+        message: "Invalid test type. Test type must be 'regular' or 'premium'.",
+      });
+    }
+
+    // Find the category by its name
+    const findCategory = await prisma.category.findUnique({
+      where: { name: category },
+    });
+
+    if (!findCategory) {
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "Category not found" });
+    }
+
+    // Create the diagnostic test
+    const diagnosticTest = await prisma.diagnosticTest.create({
+      data: {
+        name,
+        price,
+        categoryName: category, 
+        type,
+      },
+    });
+
+    res.status(StatusCode.Created).json({ diagnosticTest });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error creating diagnostic test", error });
+  }
+};
+
+
+
 const addSelectedTest = async (req: Request, res: Response) => {
   try {
     const { userId, diagnosticTestIds, quantity } = req.body;
 
     // Check if the user exists
-    const user = await prisma.users.findUnique({
-      where: { id: userId },
-    });
+    const user = await prisma.users.findUnique({where: { id: userId },});
 
     // Ensure that the user exists
-    if (!user) {
-      return res
-        .status(StatusCode.NotFound)
-        .json({ message: "User not found" });
-    }
+    if (!user) {return res.status(StatusCode.NotFound).json({ message: "User not found" });
+}
 
     // Iterate over each selected diagnostic test ID
     for (const diagnosticTestId of diagnosticTestIds) {
@@ -55,11 +92,7 @@ const addSelectedTest = async (req: Request, res: Response) => {
 
       // If it does not exist, 
       if (!diagnosticTest) {
-        return res
-          .status(StatusCode.NotFound)
-          .json({
-            message: `Diagnostic test with ID ${diagnosticTestId} not found`,
-          });
+        return res.status(StatusCode.NotFound).json({ message: `Diagnostic test with ID ${diagnosticTestId} not found` });
       }
 
       // Add the selected test to the database
@@ -95,4 +128,10 @@ const removeSelectedTest = async (req: Request, res: Response) => {
   }
 };
 
-export { handleDiagnosticTests, addSelectedTest, removeSelectedTest };
+export {
+  handleDiagnosticTests,
+  addSelectedTest,
+  removeSelectedTest,
+  createDiagnosticTest,
+};
+

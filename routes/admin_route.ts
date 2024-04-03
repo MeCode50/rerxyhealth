@@ -9,7 +9,7 @@ import { adminDeleteProduct } from "../controllers/admin/product/delete_product"
 import {createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
-  updatedTestById,
+  //updatedTestById,
   deleteTestBtId,
 } from "../controllers/admin/diagnostics/admin_controller"
   
@@ -37,7 +37,7 @@ app.delete("/admin/product/delete/:id", adminDeleteProduct)
 app.post("/admin/diagnostic/create", createDiagnosticTest);
 app.get("/admin/diagnostic/all", getAllDiagnosticTest);
 app.get("/admin/diagnostic/:id", getTestById);
-app.put("/admin/diagnostic/edit/:id", updatedTestById);
+//app.put("/admin/diagnostic/edit/:id", updatedTestById);
 app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
 
 const adminRouter = app;

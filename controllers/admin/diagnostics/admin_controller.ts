@@ -1,3 +1,4 @@
+/*
 import prisma from "../../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
@@ -73,7 +74,7 @@ const getTestById = async (req: Request, res: Response) => {
 }
 
 //update a test by Id
-/*const updatedTestById = async (req: Request, res: Response) => {
+const updatedTestById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         //update a single test 
@@ -89,7 +90,7 @@ const getTestById = async (req: Request, res: Response) => {
         res.status(StatusCode.InternalServerError).json({ message: "failed to update test", error })
         
     }
-}*/
+}
 
 // delete test by id 
 const deleteTestBtId = async (req: Request, res: Response) => {
@@ -108,8 +109,7 @@ export {
   createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
-  //updatedTestById,
+  updatedTestById,
   deleteTestBtId,
 };
-
-
+*/

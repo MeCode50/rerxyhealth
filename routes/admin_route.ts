@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import { getAllUsers } from "../controllers/admin/users/get_all_users";
 import { deleteUser } from "../controllers/admin/users/delete_user";
 import { updateUser } from "../controllers/admin/users/edit_user";
@@ -42,3 +42,4 @@ app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
 
 const adminRouter = app;
 export default adminRouter;
+*/

@@ -31,40 +31,51 @@ const handleDiagnosticTests = async (req: Request, res: Response) => {
 
 const addSelectedTest = async (req: Request, res: Response) => {
   try {
-    const { userId, diagnosticTestId, quantity } = req.body;
+    const { userId, diagnosticTestIds, quantity } = req.body;
 
-    // Check if the user and diagnostic test exist
+    // Check if the user exists
     const user = await prisma.users.findUnique({
       where: { id: userId },
     });
-    const diagnosticTest = await prisma.diagnosticTest.findUnique({
-      where: { id: diagnosticTestId },
-      include: { category: true }, 
-    });
 
-    if (!user || !diagnosticTest) {
+    // Ensure that the user exists
+    if (!user) {
       return res
         .status(StatusCode.NotFound)
-        .json({ message: "User or diagnostic test not found" });
+        .json({ message: "User not found" });
     }
 
-    // Add the selected test to the database
-    const selectedTest = await prisma.selectedTest.create({
-      data: {
-        userId: userId,
-        testName: diagnosticTest.name, 
-        price: diagnosticTest.price, 
-        quantity: quantity,
-        diagnosticTestId: diagnosticTestId,
-      },
-    });
+    // Iterate over each selected diagnostic test ID
+    for (const diagnosticTestId of diagnosticTestIds) {
+      // Check if the diagnostic test exists
+      const diagnosticTest = await prisma.diagnosticTest.findUnique({
+        where: { id: diagnosticTestId },
+        include: { category: true },
+      });
 
-    res.status(StatusCode.Created).json(selectedTest);
-  } catch (error) {
-    res
-      .status(StatusCode.InternalServerError)
-      .json({ message: "Error adding selected test", error });
-  }
+      // If it does not exist, 
+      if (!diagnosticTest) {
+        return res
+          .status(StatusCode.NotFound)
+          .json({
+            message: `Diagnostic test with ID ${diagnosticTestId} not found`,
+          });
+      }
+
+      // Add the selected test to the database
+      const selectedTest = await prisma.selectedTest.create({
+        data: {
+          userId: userId,
+          testName: diagnosticTest.name,
+          price: diagnosticTest.price,
+          quantity: quantity,
+          diagnosticTestId: diagnosticTestId,
+        },
+      });
+    }
+    res.status(StatusCode.Created).json({ message: "Selected tests added successfully" });} catch (error) {
+
+    console.error("Error adding selected tests:", error);res.status(StatusCode.InternalServerError).json({ message: "Error adding selected tests", error });}
 };
 
 const removeSelectedTest = async (req: Request, res: Response) => {

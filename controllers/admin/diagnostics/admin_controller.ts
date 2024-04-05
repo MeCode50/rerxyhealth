@@ -4,44 +4,41 @@ import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
 
 // create test 
-const createDiagnosticTest = async (req: Request, res: Response) => {
+cconst createDiagnosticTest = async (req: Request, res: Response) => {
   try {
-    const { name, price, category, type } = req.body;
+    const { tests } = req.body;
 
-    //validate data entered 
-        if (!name || !price || !category || !type) {
-            return res.status(StatusCode.BadRequest).json({ message: 'Missing required field' });
+    const createdTests = await Promise.all(
+      tests.map(async (test: any) => {
+        const { name, price, type } = test;
+        // Check if the provided test type is valid
+        if (type !== "regular" && type !== "premium") {
+          return res.status(StatusCode.BadRequest).json({
+            message:
+              "Invalid test type. Test type must be 'regular' or 'premium'.",
+          });
         }
 
-    // Find the category by its name
-    const findCategory = await prisma.category.findUnique({
-      where: { name: category },
-    });
+        // Create the diagnostic test
+        const diagnosticTest = await prisma.diagnosticTest.create({
+          data: {
+            name,
+            price,
+            type,
+          },
+        });
 
-    if (!findCategory) {
-      return res
-        .status(StatusCode.BadRequest)
-        .json({ message: "Category not found" });
-    }
+        return diagnosticTest;
+      }),
+    );
 
-    // Create the diagnostic test
-    const diagnosticTest = await prisma.diagnosticTest.create({
-      data: {
-        name,
-        price,
-        categoryName: category,
-        type,
-      },
-    });
-
-    res.status(StatusCode.Created).json({ diagnosticTest });
+    res.status(StatusCode.Created).json({ tests: createdTests });
   } catch (error) {
     res
       .status(StatusCode.InternalServerError)
       .json({ message: "Error creating diagnostic test", error });
   }
 };
-
 // retrieve all diagnostic tests
 const getAllDiagnosticTest = async (req: Request, res: Response) => {
     try {

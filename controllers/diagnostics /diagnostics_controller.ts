@@ -69,10 +69,23 @@ const addSelectedTest = async (req: Request, res: Response) => {
   try {
     const { userId, diagnosticTestIds, quantity } = req.body;
 
-    // Check if the user exists
+    let idsToProcess: string[];
+
+    // to check if diagnostic test is an array 
+    if (Array.isArray(diagnosticTestIds)) {
+      idsToProcess = diagnosticTestIds;
+    } else if (typeof diagnosticTestIds === "string") {
+      idsToProcess = [diagnosticTestIds];
+    } else {
+      return res.status(StatusCode.BadRequest).json({
+        message: "Invalid diagnostic test format, expected an array "
+      });
+    }
+
+    
+
     const user = await prisma.users.findUnique({ where: { id: userId } });
 
-    // Ensure that the user exists
     if (!user) {
       return res
         .status(StatusCode.NotFound)
@@ -86,13 +99,10 @@ const addSelectedTest = async (req: Request, res: Response) => {
         where: { id: diagnosticTestId },
       });
 
-      // If it does not exist, return a 404 response
       if (!diagnosticTest) {
-        return res
-          .status(StatusCode.NotFound)
-          .json({
-            message: `Diagnostic test with ID ${diagnosticTestId} not found`,
-          });
+        return res.status(StatusCode.NotFound).json({
+          message: `Diagnostic test with ID ${diagnosticTestId} not found`,
+        });
       }
 
       // Add the selected test to the database
@@ -119,7 +129,7 @@ const addSelectedTest = async (req: Request, res: Response) => {
 
 const removeSelectedTest = async (req: Request, res: Response) => {
   try {
-    const selectedTestId = req.params.selectedTestId;
+    const selectedTestId = req.params.id;
 
     // Delete the selected test from the user's cart
     await prisma.selectedTest.delete({

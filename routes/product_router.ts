@@ -20,10 +20,6 @@ import {
 
 const router = express.Router();
 
-// create and delete product images
-//router.post("/product/create", isAuthenticated, upload.single("image"), createProduct);
-//router.delete("/product/delete/:id", isAuthenticated, deleteProduct);
-
 // Product router
 router.get("/products", getAllProduct);
 router.get("/product/:id", isAuthenticated, getById);

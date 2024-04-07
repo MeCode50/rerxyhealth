@@ -1,4 +1,4 @@
-/*import express from "express";
+import express from "express";
 import { getAllUsers } from "../controllers/admin/users/get_all_users";
 import { deleteUser } from "../controllers/admin/users/delete_user";
 import { updateUser } from "../controllers/admin/users/edit_user";
@@ -6,12 +6,12 @@ import { admin_get_all_appointments } from "../controllers/admin/appointments/ad
 import { adminCreateProduct } from "../controllers/admin/product/create_product";
 import { adminGetProduct } from "../controllers/admin/product/get_all_product";
 import { adminDeleteProduct } from "../controllers/admin/product/delete_product";
-import {createDiagnosticTest,
+/*import {createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
-  //updatedTestById,
+  updatedTestById,
   deleteTestBtId,
-} from "../controllers/admin/diagnostics/admin_controller"
+} from "../controllers/admin/diagnostics/admin_controller"*/
   
 
 const app = express.Router();
@@ -34,12 +34,12 @@ app.get("/admin/product/all", adminGetProduct)
 app.delete("/admin/product/delete/:id", adminDeleteProduct)
 
 // diagnostic test section 
-app.post("/admin/diagnostic/create", createDiagnosticTest);
-app.get("/admin/diagnostic/all", getAllDiagnosticTest);
-app.get("/admin/diagnostic/:id", getTestById);
+//app.post("/admin/diagnostic/create", createDiagnosticTest);
+//app.get("/admin/diagnostic/all", getAllDiagnosticTest);
+//app.get("/admin/diagnostic/:id", getTestById);
 //app.put("/admin/diagnostic/edit/:id", updatedTestById);
-app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
+//app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
 
 const adminRouter = app;
 export default adminRouter;
-*/
+

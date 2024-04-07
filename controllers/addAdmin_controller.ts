@@ -7,8 +7,8 @@ import { Prisma } from "@prisma/client";
 const addAdmin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const existingAdmin = await prisma.admin.findUnique({
-      where: { email: email } as  Prisma.AdminWhereUniqueInput,
+    const existingAdmin = await prisma.admin.findFirst({
+      where: { email: email },
     });
     if (existingAdmin) {
       return res

@@ -8,7 +8,7 @@ import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
 import { appointmentRouter } from "./routes/appointment_route";
-//import adminRouter from "./routes/admin_route";
+import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
 import  VerifyTrans  from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
@@ -24,7 +24,7 @@ const routes = [
   profileRouter,
   walletRouter,
   appointmentRouter,
-  //adminRouter,
+  adminRouter,
   settings_router,
   VerifyTrans,
   diagnosticsRouter

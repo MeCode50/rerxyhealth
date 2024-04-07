@@ -1,17 +1,15 @@
-/*
 import prisma from "../../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
 
-// create test 
-cconst createDiagnosticTest = async (req: Request, res: Response) => {
+// create test
+const createDiagnosticTest = async (req: Request, res: Response) => {
   try {
     const { tests } = req.body;
 
     const createdTests = await Promise.all(
       tests.map(async (test: any) => {
         const { name, price, type } = test;
-        // Check if the provided test type is valid
         if (type !== "regular" && type !== "premium") {
           return res.status(StatusCode.BadRequest).json({
             message:
@@ -41,65 +39,66 @@ cconst createDiagnosticTest = async (req: Request, res: Response) => {
 };
 // retrieve all diagnostic tests
 const getAllDiagnosticTest = async (req: Request, res: Response) => {
-    try {
-        const diagnosticTests = await prisma.diagnosticTest.findMany({
-            include: {
-                category: true,
-            },
-        });
-        res.status(StatusCode.OK).json({ diagnosticTests });
-    } catch (error) {
-        res.status(StatusCode.InternalServerError).json({ message: 'Error retrieving the diagnostic tests', error })
-    }
+  try {
+    const diagnosticTests = await prisma.diagnosticTest.findMany();
+    res.status(StatusCode.OK).json({ diagnosticTests });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error retrieving the diagnostic tests", error });
+  }
 };
 
 // retrieve a test by Id
 const getTestById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-// retrieve a single test 
-        const diagnosticTest = await prisma.diagnosticTest.findUnique({
-            where:
-                { id, }, include: { category: true, }
-        });
-        if (!diagnosticTest) {
-            return res.status(StatusCode.NotFound).json({ message: "Diagnostic test not found" });
-        }res.status(StatusCode.OK).json({ diagnosticTest });
-    } catch (error) {
-        res.status(StatusCode.InternalServerError).json({message:"Error retrieving diagnostic test", error})              
+  try {
+    const { id } = req.params;
+    const diagnosticTest = await prisma.diagnosticTest.findUnique({
+      where: { id },
+    });
+    if (!diagnosticTest) {
+      return res
+        .status(StatusCode.NotFound)
+        .json({ message: "Diagnostic test not found" });
     }
-}
+    res.status(StatusCode.OK).json({ diagnosticTest });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error retrieving diagnostic test", error });
+  }
+};
 
-//update a test by Id
+// update a test by Id
 const updatedTestById = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        //update a single test 
-        const { name, price, categoryId, type } = req.body;
+  try {
+    const { id } = req.params;
+    const { name, price, type } = req.body;
 
-        const updateTest = await prisma.diagnosticTest.update({
-            where: { id, },
-            data: { name, price, categoryId , type},
-            include: { category: true, },
-        });
-        res.status(StatusCode.OK).json({ updateTest })
-    } catch (error) {
-        res.status(StatusCode.InternalServerError).json({ message: "failed to update test", error })
-        
-    }
-}
+    const updateTest = await prisma.diagnosticTest.update({
+      where: { id },
+      data: { name, price, type },
+    });
+    res.status(StatusCode.OK).json({ updateTest });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "failed to update test", error });
+  }
+};
 
-// delete test by id 
+// delete test by id
 const deleteTestBtId = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-        // delete test from database
-        await prisma.diagnosticTest.delete({ where: { id, } });
-        res.status(StatusCode.OK).json({ message: "diagnostic test deleted" })
-    } catch (error) {
-        res.status(StatusCode.InternalServerError).json({ message: 'Error deleting test', error })
-    }
+    await prisma.diagnosticTest.delete({ where: { id } });
+    res.status(StatusCode.OK).json({ message: "diagnostic test deleted" });
+  } catch (error) {
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Error deleting test", error });
+  }
 };
 
 export {
@@ -109,4 +108,3 @@ export {
   updatedTestById,
   deleteTestBtId,
 };
-*/

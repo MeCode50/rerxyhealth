@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import prisma from "../prisma/index";
 import { StatusCode } from "../enums/status";
-import { Prisma } from "@prisma/client";
 
 const addAdmin = async (req: Request, res: Response) => {
   try {

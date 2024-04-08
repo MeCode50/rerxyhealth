@@ -47,7 +47,7 @@ const getAllDiagnosticTest = async (req: Request, res: Response) => {
       .status(StatusCode.InternalServerError)
       .json({ message: "Error retrieving the diagnostic tests", error });
   }
-};
+}
 
 // retrieve a test by Id
 const getTestById = async (req: Request, res: Response) => {

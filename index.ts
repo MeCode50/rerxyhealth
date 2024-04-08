@@ -27,7 +27,8 @@ const routes = [
   adminRouter,
   settings_router,
   VerifyTrans,
-  diagnosticsRouter
+  diagnosticsRouter,
+  imageRouter
 ];
 
 
@@ -37,7 +38,7 @@ app.use(cors());
 
 
 // Use the image upload route
-app.use("/api/images", imageRouter);
+//app.use("/api/images", imageRouter);
 
 
 // API routes

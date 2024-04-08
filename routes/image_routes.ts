@@ -1,15 +1,20 @@
 
 import express from "express";
-import { handleFileUpload } from "../controllers/fileUpload";
 import { isAuthenticated } from "../middleware/isAuthenticated";
-import upload from "../middleware/multer";
+import { imageUpload, pdfUpload } from "../middleware/multer";
+import { handleImageUpload, handlePdfUpload } from "../controllers/fileUpload";
 
 const router = express.Router();
 
-// Handle image upload
-router.post("/upload/image", isAuthenticated, upload.single("image"), handleFileUpload);
+router.post("/upload/image",isAuthenticated,imageUpload.single("image"),handleImageUpload,);
 
-// pdf upload 
-router.post("/upload/pdf", isAuthenticated, upload.single("pdf"), handleFileUpload);
+router.post("/upload/pdf",isAuthenticated,pdfUpload.single("pdf"),handlePdfUpload);
 
 export default router;
+
+
+
+
+
+
+

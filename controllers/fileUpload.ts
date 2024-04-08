@@ -1,33 +1,63 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../enums/status";
-import { uploadToCloudinary } from "../helper/Cloudinary/cloudinary";
+import { imageUpload, pdfUpload } from "../middleware/multer";
 
-// Handle file upload
-const handleFileUpload = async (req: Request, res: Response) => {
+// Handle image upload
+export const handleImageUpload = (req: Request, res: Response) => {
   try {
-    if (!req.file) {return res.status(StatusCode.BadRequest).json({ message: "No file uploaded" });
-    }
+    imageUpload.single("image")(req, res, function (err) {
+      if (err) {
+        console.error("Error uploading image:", err);
+        return res
+          .status(StatusCode.InternalServerError)
+          .json({ message: "Error uploading image", error: err });
+      }
 
-    if (req.file.mimetype.startsWith("image")) {
-    const imageUrl = await uploadToCloudinary(req.file);
+      console.log("Uploaded image:", req.file); // Logging the req.file object
 
-    if (!imageUrl) {return res.status(StatusCode.InternalServerError).json({ message: "Error uploading image to Cloudinary" });
-    }
+      if (!req.file) {
+        console.error("No file uploaded");
+        return res
+          .status(StatusCode.BadRequest)
+          .json({ message: "No file uploaded" });
+      }
 
-    return res.status(StatusCode.Created).json({ message: "Image uploaded successfully", imageUrl });
-    } else if (req.file.mimetype.startsWith("application/pdf")) {
-      // Upload the PDF to Cloudinary
-      const pdfUrl = await uploadToCloudinary(req.file);
-
-      if (!pdfUrl) {return res.status(StatusCode.InternalServerError).json({ message: "Error uploading PDF to Cloudinary" });
-    }
-     return res.status(StatusCode.Created).json({ message: "PDF uploaded successfully", pdfUrl });
-    } else {return res.status(StatusCode.BadRequest).json({ message: "Unsupported file format" });
-    }
+      const imageUrl = req.file.path;
+      res
+        .status(StatusCode.Created)
+        .json({ message: "Image uploaded successfully", imageUrl });
+    });
   } catch (error) {
-    console.error("Error uploading file:", error);
-    return res.status(StatusCode.InternalServerError).json({ message: "Internal server error" });
+    console.error("Error uploading image:", error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Internal server error" });
   }
 };
 
-export { handleFileUpload };
+
+// Handle PDF upload
+export const handlePdfUpload = (req: Request, res: Response) => {
+  try {
+    pdfUpload.single("pdf")(req, res, function () {
+     
+      if (!req.file) {
+        console.error("No file uploaded");
+        return res
+          .status(StatusCode.BadRequest)
+          .json({ message: "No file uploaded" });
+      }
+
+      console.log("Uploaded PDF:", req.file);
+      const pdfUrl = req.file.path;
+      res
+        .status(StatusCode.Created)
+        .json({ message: "PDF uploaded successfully", pdfUrl });
+    });
+  } catch (error) {
+    console.error("Error uploading PDF:", error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Internal server error" });
+  }
+};

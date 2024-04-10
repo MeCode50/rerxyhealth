@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prisma from "../../prisma";
+import { signJWT } from "../../helper/jwt_helper";
 
 // Signup  for doctors
 const signupDoctor = async (req: Request, res: Response) => {
@@ -43,6 +44,15 @@ const signupDoctor = async (req: Request, res: Response) => {
         
       },
     });
+       const { id } = newDoctor;
+      const jwt = signJWT({ id });
+      
+      const emailDetails = {
+        subject: "Welcome to RexHealth 🔥",
+        body: { username: firstName },
+        template: "email_templates/welcome",
+      };
+
 
     res.status(201).json({ message: "Doctor registered successfully", doctor: newDoctor });
   } catch (error) {

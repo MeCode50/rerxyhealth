@@ -3,8 +3,8 @@ import { signupDoctor, signinDoctor } from "../controllers/doctors/doctor_auth";
 
 const router = express.Router();
 
-router.post('/signup', signupDoctor)
-router.post('/login', signinDoctor)
+router.post('/doctor/signup', signupDoctor)
+router.post('/doctor/login', signinDoctor)
 
 
 const DoctorthRouter = router;

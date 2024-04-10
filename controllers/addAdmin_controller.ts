@@ -40,11 +40,9 @@ const approveDoctor = async (req: Request, res: Response) => {
       data: { isApproved: true },
     });
 
-    // Return success response
     res.status(StatusCode.OK).json({ message: "Doctor approved successfully", data: updatedDoctor });
   } catch (error) {
     console.error("Error approving doctor:", error);
-    // Return error response
     res.status(StatusCode.InternalServerError).json({ message: "Error approving doctor", error });
   }
 };

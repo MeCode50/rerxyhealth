@@ -6,7 +6,7 @@ import { admin_get_all_appointments } from "../controllers/admin/appointments/ad
 import { adminCreateProduct } from "../controllers/admin/product/create_product";
 import { adminGetProduct } from "../controllers/admin/product/get_all_product";
 import { adminDeleteProduct } from "../controllers/admin/product/delete_product";
-import { addAdmin } from "../controllers/addAdmin_controller";
+import { createAdmin } from "../controllers/addAdmin_controller";
 import {createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
@@ -18,7 +18,7 @@ import {createDiagnosticTest,
 const app = express.Router();
 
 // add admin 
-app.post("/admin/user/add", addAdmin);
+app.post("/admin/user/add", createAdmin);
 
 app.get("/admin/users/all", getAllUsers);
 app.delete("/admin/users/delete/:id", deleteUser);

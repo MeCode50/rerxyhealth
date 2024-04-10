@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../prisma/index";
 import { StatusCode } from "../enums/status";
 
-const addAdmin = async (req: Request, res: Response) => {
+const createAdmin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     const existingAdmin = await prisma.admin.findFirst({
@@ -16,7 +16,6 @@ const addAdmin = async (req: Request, res: Response) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // create admin user
     const newAdmin = await prisma.admin.create({
       data: { email, password: hashedPassword },
     });
@@ -30,4 +29,23 @@ const addAdmin = async (req: Request, res: Response) => {
       .json({ message: "Error adding admin", error });
   }
 };
-export { addAdmin };
+
+// Approve doctor by admin
+const approveDoctor = async (req: Request, res: Response) => {
+  try {
+    const { doctorId } = req.params;
+
+    const updatedDoctor = await prisma.doctors.update({
+      where: { id: doctorId },
+      data: { approved: true },
+    });
+
+    // Return success response
+    res.status(StatusCode.OK).json({ message: "Doctor approved successfully", data: updatedDoctor });
+  } catch (error) {
+    console.error("Error approving doctor:", error);
+    // Return error response
+    res.status(StatusCode.InternalServerError).json({ message: "Error approving doctor", error });
+  }
+};
+export { createAdmin, approveDoctor };

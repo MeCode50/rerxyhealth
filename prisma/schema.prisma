@@ -119,6 +119,7 @@ model Doctors {
   country       String
   state         String
   certificate   String
+  isApproved    Boolean      @default(false) 
   Appointment   Appointment[]
   appointmentId String?       @db.ObjectId
 }

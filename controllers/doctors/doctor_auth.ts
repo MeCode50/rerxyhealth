@@ -18,7 +18,6 @@ const signupDoctor = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    // Check if the email already exists
     const existingDoctor = await prisma.doctors.findUnique({
       where: { email },
     });
@@ -27,10 +26,8 @@ const signupDoctor = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the new doctor
     const newDoctor = await prisma.doctors.create({
       data: {
         email,
@@ -55,11 +52,10 @@ const signupDoctor = async (req: Request, res: Response) => {
 };
 
 // Signin controller for doctors
-const signinDoctorController = async (req: Request, res: Response) => {
+const signinDoctor = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    // Find the doctor by email
     const doctor = await prisma.doctors.findUnique({
       where: { email },
     });
@@ -68,7 +64,6 @@ const signinDoctorController = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    // Compare the password
     const passwordMatch = await bcrypt.compare(password, doctor.password);
 
     if (!passwordMatch) {
@@ -88,4 +83,4 @@ const signinDoctorController = async (req: Request, res: Response) => {
   }
 };
 
-export { signupDoctorController, signinDoctorController };
+export { signupDoctor, signinDoctor };

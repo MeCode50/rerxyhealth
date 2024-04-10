@@ -13,11 +13,13 @@ import { settings_router } from "./routes/settings_route";
 import  VerifyTrans  from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
 import imageRouter from "./routes/image_routes";
+import DoctorthRouter from './routes/doctor_routes'
 
 
 require("dotenv").config();
 //Routes handlers
 const routes = [
+  DoctorthRouter,
   authRouter,
   onboardingRouter,
   productRouter,

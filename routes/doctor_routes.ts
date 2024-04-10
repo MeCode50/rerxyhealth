@@ -7,5 +7,5 @@ router.post('/signup', signupDoctor)
 router.post('/login', signinDoctor)
 
 
-const authRouter = router;
-export default authRouter;
+const DoctorthRouter = router;
+export default DoctorthRouter;

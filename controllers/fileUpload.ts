@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../enums/status";
 import { imageUpload, pdfUpload } from "../middleware/multer";
+import { error } from "console";
 
 // Handle image upload
 export const handleImageUpload = (req: Request, res: Response) => {
   try {
-    imageUpload.single("image")(req, res, function (err) {
-      if (err) {
-        console.error("Error uploading image:", err);
+    imageUpload.single("image")(req, res, function () {
+      if  (!req.file) {
+        console.error("Error uploading image:");
         return res
           .status(StatusCode.InternalServerError)
-          .json({ message: "Error uploading image", error: err });
+          .json({ message: "Error uploading image", error });
       }
 
       console.log("Uploaded image:", req.file);

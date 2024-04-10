@@ -112,6 +112,13 @@ model Doctors {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   firstName     String
   lastName      String
+  email         String
+  phoneNumber   String
+  password      String
+  specialization String
+  country       String
+  state         String
+  certificate   String
   Appointment   Appointment[]
   appointmentId String?       @db.ObjectId
 }

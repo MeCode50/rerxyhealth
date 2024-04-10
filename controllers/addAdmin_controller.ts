@@ -37,7 +37,7 @@ const approveDoctor = async (req: Request, res: Response) => {
 
     const updatedDoctor = await prisma.doctors.update({
       where: { id: doctorId },
-      data: { approved: true },
+      data: { isApproved: true },
     });
 
     // Return success response

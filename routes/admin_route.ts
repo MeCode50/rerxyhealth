@@ -6,7 +6,7 @@ import { admin_get_all_appointments } from "../controllers/admin/appointments/ad
 import { adminCreateProduct } from "../controllers/admin/product/create_product";
 import { adminGetProduct } from "../controllers/admin/product/get_all_product";
 import { adminDeleteProduct } from "../controllers/admin/product/delete_product";
-import { createAdmin } from "../controllers/addAdmin_controller";
+import { createAdmin,approveDoctor } from "../controllers/addAdmin_controller";
 import {createDiagnosticTest,
   getAllDiagnosticTest,
   getTestById,
@@ -38,6 +38,9 @@ app.get("/admin/diagnostic/all", getAllDiagnosticTest);
 app.get("/admin/diagnostic/:id", getTestById);
 app.put("/admin/diagnostic/edit/:id", updatedTestById);
 app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
+
+// doctors approval 
+app.put('/doctor/:doctorId/approve', approveDoctor);
 
 const adminRouter = app;
 export default adminRouter;

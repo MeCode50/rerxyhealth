@@ -53,7 +53,7 @@ export const getAppointmentsByDate = async (req: Request, res: Response) => {
   }
 };
 
-export const markAppointmentAsEnded = async (req: Request, res: Response) => {
+export const AppointmentAsEnded = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {

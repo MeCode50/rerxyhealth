@@ -26,3 +26,30 @@ export const getDoctorAppointments = async (req: Request, res: Response) => {
     return res.status(StatusCode.InternalServerError).json({ message: "Error fetching doctor appointments" });
   }
 };
+
+export const getAppointmentsByDate = async (req: Request, res: Response) => {
+  const { date } = req.params;
+  //@ts-ignore
+  const doctorId = req?.id; 
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        day: date,
+        doctorsId: doctorId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(StatusCode.NoContent).json({ message: `No appointments found for ${date}` });
+    }
+
+    return res.status(StatusCode.OK).json({ message: `Appointments for ${date}`, data: appointments });
+  } catch (error) {
+    console.error("Error fetching appointments by date:", error);
+    return res.status(StatusCode.InternalServerError).json({ message: "Error fetching appointments by date" });
+  }
+};
+

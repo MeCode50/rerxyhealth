@@ -53,3 +53,20 @@ export const getAppointmentsByDate = async (req: Request, res: Response) => {
   }
 };
 
+export const markAppointmentAsEnded = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const appointment = await prisma.appointment.update({
+      where: { id },
+      data: { hasEnded: true },
+    });
+
+    return res.status(StatusCode.OK).json({ message: "Appointment marked as ended", data: appointment });
+  } catch (error) {
+    console.error("Error marking appointment as ended:", error);
+    return res.status(StatusCode.InternalServerError).json({ message: "Error marking appointment as ended" });
+  }
+};
+
+

@@ -1,6 +1,6 @@
 import express from "express";
-import update_password from "../controllers/settings/update_password";
 import { isAuthenticated } from "../middleware/isAuthenticated";
+import update_password from "../controllers/settings/update_password"
 import update_phone_number from "../controllers/settings/update_phone_number";
 
 const router = express.Router();

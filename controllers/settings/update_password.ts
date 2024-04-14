@@ -1,8 +1,8 @@
-import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { update_password_schema } from "../../validations/settings_validations";
 import { StatusCode } from "../../enums/status";
 import { compare } from "bcrypt";
+import prisma from "../../prisma";
 const bcrypt = require("bcrypt");
 
 const update_password = async (req: Request, res: Response) => {

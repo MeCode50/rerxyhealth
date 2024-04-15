@@ -5,7 +5,7 @@ import {
   getAppointmentsByDate,
   AppointmentAsEnded,
 } from "../controllers/doctors/appointments";
-import updateDoctorPassword from "../controllers/doctors/settings"
+import { updateDoctorPassword,editDoctorProfile} from "../controllers/doctors/settings";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 
 const router = express.Router();
@@ -21,7 +21,8 @@ router.get('/doctor/appointments/:date', getAppointmentsByDate);
 router.put("/appointments/:id/end", AppointmentAsEnded);
 
 //settings 
-router.put("/doctor/settings/password",isAuthenticated, updateDoctorPassword);
+router.put("/doctor/settings/password", isAuthenticated, updateDoctorPassword);
+router.put("/doctor/settings/edit-profile", isAuthenticated, editDoctorProfile);
 
 
 const DoctorthRouter = router;

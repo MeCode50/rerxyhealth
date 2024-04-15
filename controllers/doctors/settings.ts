@@ -60,4 +60,31 @@ const encryptedNewPassword = await hash(new_password, 10);
   }
 };
 
-export default updateDoctorPassword;
+// update doctor  profile 
+
+const editDoctorProfile = async (req: Request, res: Response) => {
+  try {
+    //@ts-ignore
+const id = req.id;
+const { firstName, lastName, country, state } = req.body;
+const updatedDoctor = await prisma.doctors.update({where: { id },
+      data: {
+        firstName,
+        lastName,
+        country,
+        state,
+      },
+    });
+
+return res.status(200).json({message: "Doctor profile updated successfully",
+doctor: updatedDoctor,
+});
+  } catch (error) {console.error("Error updating doctor profile:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+
+
+export  {updateDoctorPassword, editDoctorProfile};

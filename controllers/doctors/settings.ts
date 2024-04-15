@@ -4,21 +4,18 @@ import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
 import { compare, hash } from "bcrypt";
 
-
 const updateDoctorPassword = async (req: Request, res: Response) => {
 try {
   //@ts-ignore
 const id = req.id;
 
 const { current_password, new_password, confirm_new_password } = req.body;
-
     // Validate input data
     /*const validationResult = update_password_schema.validate({
       current_password,
       new_password,
       confirm_new_password,
     });
-
     if (validationResult.error) {
       return res.status(StatusCode.BadRequest).send({
         message: "Invalid input data",
@@ -59,7 +56,6 @@ const encryptedNewPassword = await hash(new_password, 10);
     return res.status(StatusCode.InternalServerError).send({message: "Failed to update password"});
   }
 };
-
 // update doctor  profile 
 
 const editDoctorProfile = async (req: Request, res: Response) => {
@@ -84,7 +80,32 @@ doctor: updatedDoctor,
   }
 };
 
-
-
-
-export  {updateDoctorPassword, editDoctorProfile};
+const updateNotificationSettings = async (req: Request, res: Response) => {
+  try {
+    //@ts-ignore
+const id = req.id;
+const {
+      newProductsEnabled,
+      newServicesEnabled,
+      soundEnabled,
+      vibrationEnabled,
+      inviteFriendsEnabled
+    } = req.body;
+    // update notification in database 
+    await prisma.doctors.update({
+      where: { id },
+      data: {
+        newProductsEnabled,
+        newServicesEnabled,
+        soundEnabled,
+        vibrationEnabled,
+        inviteFriendsEnabled
+      }
+    });
+    res.status(500).json({ message: "Notification settings updated successfully" });
+  } catch (error) {
+    console.error("Error updating notification settings:", error);
+    res.status(500).json({message:"internal server error"})
+  }
+}
+export { updateDoctorPassword, editDoctorProfile, updateNotificationSettings };

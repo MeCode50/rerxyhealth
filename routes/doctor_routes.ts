@@ -5,7 +5,11 @@ import {
   getAppointmentsByDate,
   AppointmentAsEnded,
 } from "../controllers/doctors/appointments";
-import { updateDoctorPassword,editDoctorProfile} from "../controllers/doctors/settings";
+import {
+  updateDoctorPassword,
+  editDoctorProfile,
+  updateNotificationSettings,
+} from "../controllers/doctors/settings";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 
 const router = express.Router();
@@ -23,6 +27,9 @@ router.put("/appointments/:id/end", AppointmentAsEnded);
 //settings 
 router.put("/doctor/settings/password", isAuthenticated, updateDoctorPassword);
 router.put("/doctor/settings/edit-profile", isAuthenticated, editDoctorProfile);
+router.put("/doctor/settings/notification",isAuthenticated,updateNotificationSettings);
+
+// chats
 
 
 const DoctorthRouter = router;

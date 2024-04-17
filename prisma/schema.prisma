@@ -212,6 +212,22 @@ model SelectedTest {
   diagnosticTestId String @db.ObjectId 
 }
 
+model ChatSessions {
+  session_id  String       @id @default(auto()) @map("_id") @db.ObjectId
+  user_id     String       @db.ObjectId
+  doctor_id   String       @db.ObjectId
+  created_at  DateTime     @default(now()) @db.Timestamp
+}
+
+model ChatMessages {
+  message_id    String       @id @default(auto()) @map("_id") @db.ObjectId
+  session_id    String       @db.ObjectId
+  sender_id     String       @db.ObjectId
+  recipient_id  String       @db.ObjectId
+  message       String
+  timestamp     DateTime     @default(now()) @db.Timestamp
+}
+
 
 
 

@@ -102,7 +102,7 @@ const {
         inviteFriendsEnabled
       }
     });
-    res.status(500).json({ message: "Notification settings updated successfully" });
+    res.status(200).json({ message: "Notification settings updated successfully" });
   } catch (error) {
     console.error("Error updating notification settings:", error);
     res.status(500).json({message:"internal server error"})

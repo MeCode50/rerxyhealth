@@ -24,7 +24,7 @@
 //   }
 // };
 
-/*import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { CRYPTOHASH } from "../constant";
 import { StatusCode } from "../enums/status";
 const jwt = require("jsonwebtoken");
@@ -46,12 +46,12 @@ export const isAuthenticated = (
       message: "Unauthorized, Token not present",
     });
   }
-};*/
+};
 
-declare global {
+/*declare global {
   namespace Express {
     interface Request {
-      id?: string; // Define the id property on the Request object
+      id?: string; 
     }
   }
 }
@@ -81,13 +81,11 @@ export const isAuthenticated = (
 
     req.id = id;
 
-    // Proceed to the next middleware or route handler
     return next();
   } catch (err) {
-    // Handle token verification errors
     return res.status(StatusCode.Unauthorized).json({
       message:"Unauthorized, Token not valid",
     });
   }
-};
+};*/
 

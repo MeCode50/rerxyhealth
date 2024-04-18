@@ -16,6 +16,7 @@ const completeProfile = async (req: Request, res: Response) => {
         username: username,
         matricNumber: matricNumber,
         usersId: userId,
+        //user: { connect: { id: userId } }, 
       },
     });
 
@@ -29,6 +30,7 @@ const completeProfile = async (req: Request, res: Response) => {
       data: {
         balance: 0,
         usersId: userId,
+        //user: { connect: { id: userId } }, // Connect the user ID to the setup profile
       },
     });
 

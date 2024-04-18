@@ -15,7 +15,7 @@ import {
   createChatSession,
   sendMessage,
   getMessageHistory,
-} from "../controllers/chats/chat_controller";
+} from "../controllers/doctors/chat_controller";
 
 const router = express.Router();
 // onboarding
@@ -35,9 +35,9 @@ router.put("/doctor/settings/edit-profile", isAuthenticated, editDoctorProfile);
 router.put("/doctor/settings/notification",isAuthenticated,updateNotificationSettings);
 
 // chats
-router.post("/chat/sessions",isAuthenticated, createChatSession);
-router.post("/chat/messages", isAuthenticated, sendMessage);
-router.get("/chat/messages/:sessionId",isAuthenticated, getMessageHistory);
+router.post("/doctor/chat/sessions",isAuthenticated, createChatSession);
+router.post("/doctor/chat/messages", isAuthenticated, sendMessage);
+router.get("/doctor/chat/messages/:sessionId",isAuthenticated, getMessageHistory);
 
 
 const DoctorthRouter = router;

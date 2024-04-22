@@ -4,6 +4,7 @@ import { validate_create_appointment } from "../../validations/appointment_valid
 import { StatusCode } from "../../enums/status";
 import { AppointmentStatus } from "@prisma/client";
 
+
 export const createAppointment = async (req: Request, res: Response) => {
   //@ts-ignore
   const userId = req?.id;
@@ -47,5 +48,29 @@ export const createAppointment = async (req: Request, res: Response) => {
   } catch (err) {
     //@ts-ignore
     return res.status(StatusCode.BadRequest).json({ message: err?.message });
+  }
+};
+
+export const cancelExpiredAppointments = async () => {
+  try {
+    // Logic to cancel appointments that have expired
+    const expiredAppointments = await prisma.appointment.findMany({
+      where: {
+        status: AppointmentStatus.Pending,
+        // Add condition to filter appointments that have expired (e.g., where time is less than current time)
+      },
+    });
+
+    // Update status of expired appointments to "Cancelled"
+    await Promise.all(
+      expiredAppointments.map(async (appointment) => {
+        await prisma.appointment.update({
+          where: { id: appointment.id },
+          data: { status: AppointmentStatus.Cancelled },
+        });
+      }),
+    );
+  } catch (error) {
+    console.error("Error cancelling expired appointments:", error);
   }
 };

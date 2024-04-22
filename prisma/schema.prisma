@@ -100,12 +100,17 @@ model Appointment {
   time            String
   hasEnded        Boolean? @default(false)
   period          Period
-  status          String
+  status          AppointmentStatus 
   appointmentType String
   Doctors         Doctors  @relation(fields: [doctorsId], references: [id])
   user            Users    @relation(fields: [usersId], references: [id])
   usersId         String   @db.ObjectId
   doctorsId       String   @db.ObjectId
+}
+enum AppointmentStatus {
+  Pending
+  Cancelled
+  Completed
 }
 
 //doctors schemas 

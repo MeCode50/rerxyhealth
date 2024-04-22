@@ -29,6 +29,7 @@ export const createAppointment = async (req: Request, res: Response) => {
         time,
         appointmentType,
         period: period as "Morning" | "Evening",
+        status: Pending,
         usersId: userId,
         doctorsId,
       },

@@ -2,6 +2,7 @@ import prisma  from "../../prisma"
 import { Request, Response } from "express";
 import { validate_create_appointment } from "../../validations/appointment_validation";
 import { StatusCode } from "../../enums/status";
+import { AppointmentStatus } from "@prisma/client";
 
 export const createAppointment = async (req: Request, res: Response) => {
   //@ts-ignore
@@ -29,7 +30,7 @@ export const createAppointment = async (req: Request, res: Response) => {
         time,
         appointmentType,
         period: period as "Morning" | "Evening",
-        status: Pending,
+        status:AppointmentStatus.Pending,
         usersId: userId,
         doctorsId,
       },

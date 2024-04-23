@@ -96,8 +96,9 @@ model SetupProfile {
 
 model Appointment {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  day             String
-  time            String
+  date         DateTime
+ startTime      String
+  endTime       String
   hasEnded        Boolean? @default(false)
   period          Period
   status          AppointmentStatus 

@@ -37,7 +37,7 @@ export const getAppointmentByDate = async (req: Request, res: Response) => {
     const getAppointment = await prisma.appointment.findMany({
       where: {
         usersId: userId,
-        day: date,
+        date: date,
       },
       include: {
         Doctors: false,

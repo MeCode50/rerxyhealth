@@ -10,14 +10,14 @@ import walletRouter from "./routes/wallet_routes";
 import { appointmentRouter } from "./routes/appointment_route";
 import adminRouter from "./routes/admin_route";
 import { settings_router } from "./routes/settings_route";
-import  VerifyTrans  from "./routes/testroute";
+import VerifyTrans from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
 import imageRouter from "./routes/image_routes";
-import DoctorthRouter from './routes/doctor_routes'
-
+import DoctorthRouter from "./routes/doctor_routes";
 
 require("dotenv").config();
-//Routes handlers
+
+// Routes handlers
 const routes = [
   DoctorthRouter,
   authRouter,
@@ -30,18 +30,15 @@ const routes = [
   settings_router,
   VerifyTrans,
   diagnosticsRouter,
-  imageRouter
+  imageRouter,
 ];
-
 
 const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-
 // Use the image upload route
-//app.use("/api/images", imageRouter);
-
+// app.use("/api/images", imageRouter);
 
 // API routes
 routes.map((items) => {
@@ -53,6 +50,11 @@ app.get("/", (req: Request, res: Response) => {
     .status(StatusCode.OK)
     .send(`Welcome to RexHealth. Server is running on port ${PORT}`);
 });
+
+/*// Scheduler to run every minute
+cron.schedule("* * * * *", () => {
+  console.log("Scheduler running successfully.");
+});*/
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);

@@ -2,7 +2,6 @@ import express from "express";
 import { isAuthenticated } from "../middleware/isAuthenticated";
 import {
   createAppointment,
-  completedAppointment,
   cancelAppointment,
 } from "../controllers/appointment/create_appointment_controller";
 import {
@@ -13,8 +12,7 @@ import {
 const app = express.Router();
 
 app.post("/appointment/create", isAuthenticated, createAppointment);
-app.post("/appointment/complete", isAuthenticated, completedAppointment);
-app.post("/appointment/cancel", isAuthenticated, cancelAppointment);
+app.delete("/appointment/cancel/:appointmentId", isAuthenticated, cancelAppointment);
 
 app.get("/appointment/me", isAuthenticated, getUsersAppointment);
 app.get("/appointment/:date", isAuthenticated, getAppointmentByDate);

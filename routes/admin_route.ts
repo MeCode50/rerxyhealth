@@ -22,7 +22,7 @@ app.post("/admin/user/add", createAdmin);
 
 app.get("/admin/users/all", getAllUsers);
 app.delete("/admin/users/delete/:id", deleteUser);
-app.put("/admin/users/edit/:id", updateUser);  // do this later 
+app.put("/admin/users/edit/:id", updateUser);  // will do this later
 
 //appoint section
 app.get("/admin/appointment/all", admin_get_all_appointments);
@@ -41,6 +41,8 @@ app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
 
 // doctors approval 
 app.put('/doctor/:doctorId/approve', approveDoctor);
+
+
 
 const adminRouter = app;
 export default adminRouter;

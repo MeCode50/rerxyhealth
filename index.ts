@@ -14,6 +14,7 @@ import VerifyTrans from "./routes/testroute";
 import diagnosticsRouter from "./routes/diagnostics_routes";
 import imageRouter from "./routes/image_routes";
 import DoctorthRouter from "./routes/doctor_routes";
+import superAdminRouter from "./routes/dashboard";
 
 require("dotenv").config();
 
@@ -31,6 +32,7 @@ const routes = [
   VerifyTrans,
   diagnosticsRouter,
   imageRouter,
+  superAdminRouter,
 ];
 
 const app: Application = express();

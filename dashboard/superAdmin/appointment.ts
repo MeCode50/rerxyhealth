@@ -47,3 +47,28 @@ appointments.forEach((appointment) => {
       .json({ error: "Internal server error" });
   }
 };
+
+export const getAppointmentsByDate = async (req: Request,res: Response,): Promise<void> => {
+  const { startDate, endDate } = req.query as {
+    startDate: string;
+    endDate: string;
+  }; 
+
+  try {
+    const appointments: Appointment[] = await prisma.appointment.findMany({
+      where: {
+        date: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      },
+    });
+
+    res.status(StatusCode.OK).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments by date:", error);
+    res
+      .status(StatusCode.InternalServerError)
+      .json({ error: "Internal server error" });
+  }
+};

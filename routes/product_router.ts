@@ -16,7 +16,7 @@ import {
   createSave,
   getAllSave,
   removeSave,
-} from "../controllers/products/save_controller";
+} from "../controllers/products/savedProductController";
 
 const router = express.Router();
 

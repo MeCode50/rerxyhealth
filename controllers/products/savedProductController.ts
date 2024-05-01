@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import { validate_save } from "../../validations/product_validation";
 
-// Get all Save Product
+// Get all Saved Product
 const getAllSave = async (req: Request, res: Response) => {
   try {
     const save = await prisma.saveProduct.findMany();
@@ -16,7 +16,7 @@ const getAllSave = async (req: Request, res: Response) => {
   }
 };
 
-// Remove Save Product
+// Remove Saved Product
 const removeSave = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

@@ -16,11 +16,15 @@ import {
   sendMessage,
   getMessageHistory,
 } from "../controllers/doctors/chat_controller";
+import { getAllDoctors } from "../controllers/doctors/getAllDoctors";
 
 const router = express.Router();
 // onboarding
 router.post('/doctor/signup', signupDoctor)
 router.post('/doctor/login', signinDoctor)
+
+// get all doctors 
+router.get('/doctors',getAllDoctors)
 
 //appointment
 router.get('/doctor/appointments', getDoctorAppointments); 

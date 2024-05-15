@@ -3,6 +3,7 @@ import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
 
 
+
 export const getUsersAppointment = async (req: Request, res: Response) => {
   //@ts-ignore
   const userId = req?.id;
@@ -12,7 +13,7 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
         usersId: userId,
       },
       include: {
-        Doctors: false,
+        Doctors: true, 
       },
     });
 
@@ -27,6 +28,7 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
     return err;
   }
 };
+
 
 //fiter through appointment
 export const getAppointmentByDate = async (req: Request, res: Response) => {

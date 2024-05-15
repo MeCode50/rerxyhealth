@@ -17,7 +17,6 @@ export const getAllDoctors = async (req: Request, res: Response) => {
   }
 };
 
-
 export const getDoctorById = async (req: Request, res: Response) => {
   const doctorId = req.params.id;
 
@@ -26,16 +25,32 @@ export const getDoctorById = async (req: Request, res: Response) => {
       where: {
         id: doctorId,
       },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phoneNumber: true,
+        password: true,
+        specialization: true,
+        country: true,
+        state: true,
+        certificate: true,
+        isApproved: true,
+      },
     });
 
     if (!doctor) {
-      return res.status(StatusCode.NotFound).json({ message: "Doctor not found" });
+      return res
+        .status(StatusCode.NotFound)
+        .json({ message: "Doctor not found" });
     }
 
-    return res.status(StatusCode.OK).json({ message: "Doctor details", data: doctor });
+    return res
+      .status(StatusCode.OK)
+      .json({ message: "Doctor details", data: doctor });
   } catch (error) {
     console.error("Error fetching doctor:", error);
     return res.status(StatusCode.InternalServerError).json({ message: "Error fetching doctor" });
   }
 };
-

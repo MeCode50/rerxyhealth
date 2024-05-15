@@ -1,6 +1,7 @@
 import express, { Application, Response, Request } from "express";
 import { StatusCode } from "./enums/status";
 import { PORT } from "./constant";
+//import "./global.d.ts";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
 import cors from "cors";

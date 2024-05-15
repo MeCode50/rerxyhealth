@@ -1,16 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { StatusCode } from "../enums/status"; // Import StatusCode enum
+import { StatusCode } from "../enums/status";
 import { CRYPTOHASH } from "../constant";
 
-interface AdminPayload {email: string;role: string}
+interface AdminPayload {
+  email: string;
+  role: string;
+}
 
-// Extend the Request object to include the admin property
-declare global {namespace Express {interface Request {admin?: AdminPayload}}}
+// Extend the Request object to include the admin and user properties
+declare global {
+  namespace Express {
+    interface Request {
+      admin?: AdminPayload;
+      user?: { id: string };
+    }
+  }
+}
 
 // Authentication middleware function
 const verifyAdminToken = (req: Request, res: Response, next: NextFunction) => {
-const token = req.headers.authorization;
+  const token = req.headers.authorization;
 
   if (!token) {
     return res
@@ -34,7 +44,7 @@ const token = req.headers.authorization;
 
 // Authorization middleware function
 const checkAdminAuthorization = (
-  req: Request & { admin?: AdminPayload }, 
+  req: Request & { admin?: AdminPayload },
   res: Response,
   next: NextFunction,
 ) => {
@@ -50,5 +60,28 @@ const checkAdminAuthorization = (
 
   next();
 };
+
+
+
+/*export const attachUserId = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  // Extract the user ID from the request headers or JWT token
+  const userId = req.headers.authorization as string | undefined;
+
+  if (!userId) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "User ID not provided" });
+  }
+
+  // Attach the user ID to the req object
+  req.id = userId;
+
+  next();
+};*/
+
 
 export { verifyAdminToken, checkAdminAuthorization };

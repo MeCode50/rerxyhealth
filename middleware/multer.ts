@@ -1,30 +1,36 @@
-import { Request } from "express";
-import multer from "multer";
+import multer, { StorageEngine, FileFilterCallback } from "multer";
+import path from "path";
 import fs from "fs";
+import { Request } from "express";
 
 const uploadDirectory = "./uploads";
-const imageDestination = `${uploadDirectory}/images`;
-const pdfDestination = `${uploadDirectory}/pdfs`;
 
-fs.mkdirSync(imageDestination, { recursive: true });
-fs.mkdirSync(pdfDestination, { recursive: true });
+// Ensure upload directory exists
+fs.mkdirSync(uploadDirectory, { recursive: true });
 
-const storage = (destination: string) =>
-  multer.diskStorage({
-    destination(req: Request,file: Express.Multer.File,
+const storage: StorageEngine = multer.diskStorage({
+  destination: (
+    req: Request,
+    file: Express.Multer.File,
     cb: (error: Error | null, destination: string) => void,
-    ) {
-      cb(null, destination);
-    },
-    filename(req: Request,file: Express.Multer.File,
-      cb: (error: Error | null, filename: string) => void,
-    ) {
-      cb(null, file.originalname);
-    },
-  });
+  ) => {
+    cb(null, uploadDirectory);
+  },
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void,
+  ) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+  },
+});
 
-const fileFilter = (req: Request,file: Express.Multer.File,
-  cb: multer.FileFilterCallback,) => {
+const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: FileFilterCallback,
+) => {
   if (
     file.mimetype.startsWith("image/") ||
     file.mimetype === "application/pdf"
@@ -35,12 +41,11 @@ const fileFilter = (req: Request,file: Express.Multer.File,
   }
 };
 
-const upload = (destination: string) =>multer({storage: storage(destination),
-    fileFilter,limits: {fileSize: 10 * 1024 * 1024, // 10 MB
-    },
-  });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+});
 
-const imageUpload = upload(imageDestination);
-const pdfUpload = upload(pdfDestination);
-
-export { imageUpload, pdfUpload };
+export const imageUpload = upload.single("file"); // Field name 'file'
+export const pdfUpload = upload.single("file"); // Field name 'file'

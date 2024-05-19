@@ -1,10 +1,9 @@
 import express, { Application, Response, Request } from "express";
 import { StatusCode } from "./enums/status";
 import { PORT } from "./constant";
-//import "./global.d.ts";
+import cors from "cors";
 import authRouter from "./routes/auth_routes";
 import onboardingRouter from "./routes/onboarding_routes";
-import cors from "cors";
 import productRouter from "./routes/product_router";
 import profileRouter from "./routes/user";
 import walletRouter from "./routes/wallet_routes";
@@ -16,6 +15,7 @@ import diagnosticsRouter from "./routes/diagnostics_routes";
 import imageRouter from "./routes/image_routes";
 import DoctorthRouter from "./routes/doctor_routes";
 import superAdminRouter from "./routes/dashboard";
+import path from "path";
 
 require("dotenv").config();
 
@@ -40,12 +40,12 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-// Use the image upload route
-// app.use("/api/images", imageRouter);
+// Serve static files from the 'uploads' directory
+//app.use("/api/images/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API routes
-routes.map((items) => {
-  app.use("/api", items);
+routes.forEach((route) => {
+  app.use("/api", route);
 });
 
 app.get("/", (req: Request, res: Response) => {
@@ -53,11 +53,6 @@ app.get("/", (req: Request, res: Response) => {
     .status(StatusCode.OK)
     .send(`Welcome to RexHealth. Server is running on port ${PORT}`);
 });
-
-/*// Scheduler to run every minute
-cron.schedule("* * * * *", () => {
-  console.log("Scheduler running successfully.");
-});*/
 
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);

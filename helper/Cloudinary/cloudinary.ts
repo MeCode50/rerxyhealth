@@ -1,4 +1,3 @@
-import { Express } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 
@@ -10,27 +9,17 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Function to handle file upload to Cloudinary
 export async function uploadToCloudinary(
-  file: Express.Multer.File,
-): Promise<string | null> {
+  filePath: string,
+  resourceType: "image" | "raw",
+): Promise<any> {
   try {
-    // Check if a file is provided
-    if (!file) {
-      return null;
-    }
-
-    // Upload the file to Cloudinary
-    const result = await cloudinary.uploader.upload(file.path, {
-      folder: "RexHealth",
-      allowed_formats: ["jpg", "jpeg", "png"],
+    const result = await cloudinary.uploader.upload(filePath, {
+      resource_type: resourceType,
     });
-
-    // Return the URL of the uploaded file
-    return result.secure_url;
+    return result;
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
-    return null;
+    throw error;
   }
 }
-module.exports = { uploadToCloudinary };

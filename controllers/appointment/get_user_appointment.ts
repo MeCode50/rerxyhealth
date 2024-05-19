@@ -13,7 +13,7 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
         usersId: userId,
       },
       include: {
-        Doctors: true, // Include the doctor details
+        Doctors: true, 
       },
     });
 

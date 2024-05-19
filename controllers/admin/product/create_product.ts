@@ -45,8 +45,17 @@ const adminCreateProduct = async (req: Request, res: Response) => {
       product: adminNewProduct,
     });
   } catch (error) {
-    res.status(StatusCode.InternalServerError);
+    console.error(error);
+    if (error instanceof Error) {
+      res.status(StatusCode.InternalServerError).json({
+        message: "Error creating product",
+        error: error.message,
+      });
+    } else {
+      res.status(StatusCode.InternalServerError).json({
+        message: "Unknown error occurred",
+      });
+    }
   }
 };
-
 export { adminCreateProduct };

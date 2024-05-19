@@ -10,7 +10,9 @@
     "push": "npx prisma db push",
     "studio": "npx prisma studio",
     "build": "npx tsc",
-    "start": "node dist/main.js"
+    "start": "node dist/main.js",
+      "start:prod": "node dist/main"
+
   },
   "dependencies": {
     "@prisma/client": "^5.1.1",

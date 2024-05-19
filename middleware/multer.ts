@@ -47,5 +47,5 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
 });
 
-export const imageUpload = upload.single("file"); // Field name 'file'
-export const pdfUpload = upload.single("file"); // Field name 'file'
+export const imageUpload = upload.single("image");
+export const pdfUpload = upload.single("pdf");

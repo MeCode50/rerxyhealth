@@ -5,7 +5,7 @@ const status_1 = require("../enums/status");
 const multer_1 = require("../middleware/multer");
 // Handle image upload
 const handleImageUpload = (req, res) => {
-    multer_1.imageUpload.single("image")(req, res, function (err) {
+    (0, multer_1.imageUpload)(req, res, (err) => {
         if (err) {
             console.error("Error uploading image:", err);
             return res
@@ -27,7 +27,7 @@ const handleImageUpload = (req, res) => {
 exports.handleImageUpload = handleImageUpload;
 // Handle PDF upload
 const handlePdfUpload = (req, res) => {
-    multer_1.pdfUpload.single("pdf")(req, res, function (err) {
+    (0, multer_1.pdfUpload)(req, res, (err) => {
         if (err) {
             console.error("Error uploading PDF:", err);
             return res
@@ -40,7 +40,7 @@ const handlePdfUpload = (req, res) => {
                 .status(status_1.StatusCode.BadRequest)
                 .json({ message: "No file uploaded" });
         }
-        const pdfUrl = `/api/images/uploads/pdfs/${req.file.filename}`;
+        const pdfUrl = `/api/uploads/pdfs/${req.file.filename}`;
         res
             .status(status_1.StatusCode.Created)
             .json({ message: "PDF uploaded successfully", pdfUrl });

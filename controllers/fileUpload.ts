@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../enums/status";
 import { imageUpload, pdfUpload } from "../middleware/multer";
-import path from "path";
 
 // Handle image upload
 export const handleImageUpload = (req: Request, res: Response) => {
-  imageUpload.single("image")(req, res, function (err) {
+  imageUpload(req, res, (err: any) => {
     if (err) {
       console.error("Error uploading image:", err);
       return res
@@ -20,8 +19,7 @@ export const handleImageUpload = (req: Request, res: Response) => {
         .json({ message: "No file uploaded" });
     }
 
-   const imageUrl = `/api/uploads/images/${req.file.filename}`;
-
+    const imageUrl = `/api/uploads/images/${req.file.filename}`;
     res
       .status(StatusCode.Created)
       .json({ message: "Image uploaded successfully", imageUrl });
@@ -30,7 +28,7 @@ export const handleImageUpload = (req: Request, res: Response) => {
 
 // Handle PDF upload
 export const handlePdfUpload = (req: Request, res: Response) => {
-  pdfUpload.single("pdf")(req, res, function (err) {
+  pdfUpload(req, res, (err: any) => {
     if (err) {
       console.error("Error uploading PDF:", err);
       return res
@@ -45,7 +43,7 @@ export const handlePdfUpload = (req: Request, res: Response) => {
         .json({ message: "No file uploaded" });
     }
 
-    const pdfUrl = `/api/images/uploads/pdfs/${req.file.filename}`;
+    const pdfUrl = `/api/uploads/pdfs/${req.file.filename}`;
     res
       .status(StatusCode.Created)
       .json({ message: "PDF uploaded successfully", pdfUrl });

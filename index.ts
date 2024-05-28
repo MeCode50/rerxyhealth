@@ -40,15 +40,20 @@ const app: Application = express();
 app.use(express.json());
 app.use(cors());
 
-// Serve static files from the 'uploads' directory
-//app.use("/api/images/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API routes
 routes.forEach((route) => {
   app.use("/api", route);
 });
 
-app.get("/", (req: Request, res: Response) => {
+// Debugging log for registered routes
+app._router.stack.forEach((middleware: { route: { path: any; }; }) => {
+  if (middleware.route) {
+    console.log(`Registered route: ${middleware.route.path}`);
+  }
+});
+
+app.get("/api", (req: Request, res: Response) => {
   res
     .status(StatusCode.OK)
     .send(`Welcome to RexHealth. Server is running on port ${PORT}`);

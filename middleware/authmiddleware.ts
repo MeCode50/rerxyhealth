@@ -83,5 +83,27 @@ const checkAdminAuthorization = (
   next();
 };*/
 
+const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.headers.authorization;
 
-export { verifyAdminToken, checkAdminAuthorization };
+  if (!token) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "No token provided" });
+  }
+
+  try {
+    // Verify token and extract user ID
+    const decoded = jwt.verify(token, CRYPTOHASH) as { id: string };
+
+    req.user = { id: decoded.id }; // Set user information on the request object
+
+    next();
+  } catch (error) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Invalid token" });
+  }
+};
+
+export { verifyAdminToken, checkAdminAuthorization , verifyUserToken};

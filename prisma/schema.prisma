@@ -127,15 +127,13 @@ model Doctors {
   state              String
   certificate        String
   isApproved         Boolean      @default(false)
-  newProductsEnabled Boolean      @default(true)
-  newServicesEnabled Boolean      @default(true)
   soundEnabled       Boolean      @default(true)
   inviteFriendsEnabled       Boolean      @default(true)
   vibrationEnabled   Boolean      @default(true)
   Appointment        Appointment[]
   appointmentId      String?      @db.ObjectId
 }
-
+ 
 
 model Products {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId

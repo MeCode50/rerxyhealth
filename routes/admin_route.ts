@@ -6,44 +6,39 @@ import { admin_get_all_appointments } from "../controllers/admin/appointments/ad
 import { adminCreateProduct } from "../controllers/admin/product/create_product";
 import { adminGetProduct } from "../controllers/admin/product/get_all_product";
 import { adminDeleteProduct } from "../controllers/admin/product/delete_product";
-import { createAdmin,approveDoctor } from "../controllers/addAdmin_controller";
-import {createDiagnosticTest,
-  getAllDiagnosticTest,
-  getTestById,
-  updatedTestById,
-  deleteTestBtId,
-} from "../controllers/admin/diagnostics/admin_controller"
-  
-
+import { createAdmin, approveDoctor } from "../controllers/addAdmin_controller";
+import {createDiagnosticTest,getAllDiagnosticTest,getTestById,updatedTestById,deleteTestBtId,
+} from "../controllers/admin/diagnostics/admin_controller";
+import { adminGetAllDoctors } from "../controllers/admin/doctors/get_doctors";
 const app = express.Router();
 
-// add admin 
+// add admin
 app.post("/admin/user/add", createAdmin);
+// get all doctors 
+app.get("/admin/doctors", adminGetAllDoctors);
+
 
 app.get("/admin/users/all", getAllUsers);
 app.delete("/admin/users/delete/:id", deleteUser);
-app.put("/admin/users/edit/:id", updateUser);  // will do this later
+app.put("/admin/users/edit/:id", updateUser); // will do this later
 
 //appoint section
 app.get("/admin/appointment/all", admin_get_all_appointments);
 
-//product section 
-app.post("/admin/product/create", adminCreateProduct)
-app.get("/admin/product/all", adminGetProduct)
-app.delete("/admin/product/delete/:id", adminDeleteProduct)
+//product section
+app.post("/admin/product/create", adminCreateProduct);
+app.get("/admin/product/all", adminGetProduct);
+app.delete("/admin/product/delete/:id", adminDeleteProduct);
 
-// diagnostic test section 
+// diagnostic test section
 app.post("/admin/diagnostic/create", createDiagnosticTest);
 app.get("/admin/diagnostic/all", getAllDiagnosticTest);
 app.get("/admin/diagnostic/:id", getTestById);
 app.put("/admin/diagnostic/edit/:id", updatedTestById);
 app.delete("/admin/diagnostic/delete/:id", deleteTestBtId);
 
-// doctors approval 
-app.put('/doctor/:doctorId/approve', approveDoctor);
-
-
+// doctors approval
+app.put("/doctor/:doctorId/approve", approveDoctor);
 
 const adminRouter = app;
 export default adminRouter;
-

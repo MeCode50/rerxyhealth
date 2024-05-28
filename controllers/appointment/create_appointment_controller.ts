@@ -1,9 +1,10 @@
 import prisma from "../../prisma";
 import { Request, Response } from "express";
-import { StatusCode } from "../../enums/status";
+import { StatusCode } from "../../enums/status";``
 import { AppointmentStatus } from "@prisma/client";
 
 export const createAppointment = async (req: Request, res: Response) => {
+  // @ts-ignore
   const userId = req.user?.id;
   const requestBody = req.body;
 
@@ -114,7 +115,7 @@ try {
 export const cancelAppointment = async (req: Request, res: Response) => {
   
   const userId = req.user?.id;
-  const { appointmentId } = req.params; 
+  const { appointmentId } = req.params;
   try {
     const appointment = await prisma.appointment.findFirst({
       where: {
@@ -124,9 +125,10 @@ export const cancelAppointment = async (req: Request, res: Response) => {
     });
 
     if (!appointment) {
-      return res.status(StatusCode.NotFound).json({message: "Appointment not found or does not belong to the user",
-    });
-  }
+      return res.status(StatusCode.NotFound).json({
+        message: "Appointment not found or does not belong to the user",
+      });
+    }
 
     if (appointment.status === AppointmentStatus.Cancelled) {
       return res.status(StatusCode.BadRequest).json({ message: "Appointment is already canceled" });

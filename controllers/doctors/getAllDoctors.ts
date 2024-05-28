@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+/*import { Request, Response } from "express";
 import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
 
@@ -31,11 +31,9 @@ export const getDoctorById = async (req: Request, res: Response) => {
         lastName: true,
         email: true,
         phoneNumber: true,
-        password: true,
         specialization: true,
         country: true,
         state: true,
-        certificate: true,
         isApproved: true,
       },
     });
@@ -53,4 +51,4 @@ export const getDoctorById = async (req: Request, res: Response) => {
     console.error("Error fetching doctor:", error);
     return res.status(StatusCode.InternalServerError).json({ message: "Error fetching doctor" });
   }
-};
+};*/

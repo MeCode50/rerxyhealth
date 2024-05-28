@@ -85,8 +85,6 @@ const updateNotificationSettings = async (req: Request, res: Response) => {
     //@ts-ignore
 const id = req.id;
 const {
-      newProductsEnabled,
-      newServicesEnabled,
       soundEnabled,
       vibrationEnabled,
       inviteFriendsEnabled
@@ -95,8 +93,6 @@ const {
     await prisma.doctors.update({
       where: { id },
       data: {
-        newProductsEnabled,
-        newServicesEnabled,
         soundEnabled,
         vibrationEnabled,
         inviteFriendsEnabled

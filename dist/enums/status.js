@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StatusCode = void 0;
+var StatusCode;
+(function (StatusCode) {
+    StatusCode[StatusCode["Continue"] = 100] = "Continue";
+    StatusCode[StatusCode["SwitchingProtocols"] = 101] = "SwitchingProtocols";
+    StatusCode[StatusCode["OK"] = 200] = "OK";
+    StatusCode[StatusCode["Created"] = 201] = "Created";
+    StatusCode[StatusCode["Accepted"] = 202] = "Accepted";
+    StatusCode[StatusCode["NoContent"] = 204] = "NoContent";
+    StatusCode[StatusCode["MovedPermanently"] = 301] = "MovedPermanently";
+    StatusCode[StatusCode["Found"] = 302] = "Found";
+    StatusCode[StatusCode["NotModified"] = 304] = "NotModified";
+    StatusCode[StatusCode["BadRequest"] = 400] = "BadRequest";
+    StatusCode[StatusCode["Unauthorized"] = 401] = "Unauthorized";
+    StatusCode[StatusCode["Forbidden"] = 403] = "Forbidden";
+    StatusCode[StatusCode["NotFound"] = 404] = "NotFound";
+    StatusCode[StatusCode["MethodNotAllowed"] = 405] = "MethodNotAllowed";
+    StatusCode[StatusCode["InternalServerError"] = 500] = "InternalServerError";
+    StatusCode[StatusCode["NotImplemented"] = 501] = "NotImplemented";
+    StatusCode[StatusCode["ServiceUnavailable"] = 503] = "ServiceUnavailable";
+    StatusCode[StatusCode["Success"] = 504] = "Success";
+})(StatusCode || (exports.StatusCode = StatusCode = {}));

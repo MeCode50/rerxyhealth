@@ -9,7 +9,7 @@ const profile_1 = require("../controllers/profile");
 //import { getUserProfile, updateUserProfile } from "../controllers/profile";
 const get_transaction_pin_1 = require("../controllers/users/get_transaction_pin");
 const verify_transaction_pin_1 = require("../controllers/users/verify_transaction_pin");
-const get_doctors_1 = require("../controllers/users/get_doctors");
+const get_doctors_1 = require("../controllers/appointment/get_doctors");
 const router = express_1.default.Router();
 router.get("/profile/me", isAuthenticated_1.isAuthenticated, profile_1.getUserProfile);
 router.put("/profile/update", isAuthenticated_1.isAuthenticated, profile_1.updateUserProfile);

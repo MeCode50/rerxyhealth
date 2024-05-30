@@ -7,6 +7,6 @@ const express_1 = __importDefault(require("express"));
 const isAuthenticated_1 = require("../middleware/isAuthenticated");
 const get_wallet_balance_1 = require("../controllers/wallet/get_wallet_balance");
 const app = express_1.default.Router();
-app.get("/wallet/me", isAuthenticated_1.isAuthenticated, get_wallet_balance_1.getWalletBalance);
+app.get("/wallet/me", isAuthenticated_1.authenticateUser, get_wallet_balance_1.getWalletBalance);
 const walletRouter = app;
 exports.default = walletRouter;

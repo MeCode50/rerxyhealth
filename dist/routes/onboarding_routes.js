@@ -8,7 +8,7 @@ const onboarding_controller_1 = require("../controllers/onboarding/onboarding_co
 const isAuthenticated_1 = require("../middleware/isAuthenticated");
 const complete_profile_1 = __importDefault(require("../controllers/onboarding/complete_profile"));
 const router = express_1.default.Router();
-router.post("/onboard/create-pin", isAuthenticated_1.isAuthenticated, onboarding_controller_1.createTransactionPin);
-router.post("/onboard/complete-profile", isAuthenticated_1.isAuthenticated, complete_profile_1.default);
+router.post("/onboard/create-pin", isAuthenticated_1.authenticateUser, onboarding_controller_1.createTransactionPin);
+router.post("/onboard/complete-profile", isAuthenticated_1.authenticateUser, complete_profile_1.default);
 const onboardingRouter = router;
 exports.default = onboardingRouter;

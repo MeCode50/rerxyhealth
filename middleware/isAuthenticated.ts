@@ -1,91 +1,50 @@
-// import { NextFunction, Request, Response } from "express";
-// import { CRYPTOHASH } from "../constant";
-// import { StatusCode } from "../enums/status";
-// const jwt = require("jsonwebtoken");
-
-// export const isAuthenticated = (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-// ) => {
-//   try {
-//     const authorize = req.headers.authorization;
-//     const token = authorize?.split(" ")[1];
-//     jwt.verify(token, CRYPTOHASH) as {
-//       id: string;
-//     };
-//     //@ts-ignore
-//     req?.id = token.id;
-//    return next();
-//   } catch (err) {
-//     return res.status(StatusCode.Unauthorized).json({
-//       message: "Unauthorized, Token not present",
-//     });
-//   }
-// };
-
-import { NextFunction, Request, Response } from "express";
-import { CRYPTOHASH } from "../constant";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import { StatusCode } from "../enums/status";
-const jwt = require("jsonwebtoken");
+import { CRYPTOHASH } from "../constant";
 
-export const isAuthenticated = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const authorize = req.headers.authorization;
-    const token = authorize?.split(" ")[1];
-    const decodedToken = jwt.verify(token, CRYPTOHASH) as { id: string };
-    //@ts-ignore
-    req.id = decodedToken.id;
-    return next();
-  } catch (err) {
-    return res.status(StatusCode.Unauthorized).json({
-      message: "Unauthorized, Token not present",
-    });
-  }
-};
+interface TokenPayload {
+  id: string;
+  role: string;
+}
 
-/*declare global {
+declare global {
   namespace Express {
     interface Request {
-      id?: string; 
+      user?: { id: string };
+      role?: string;
     }
   }
 }
 
+const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
 
-import { NextFunction, Request, Response } from "express";
-import { CRYPTOHASH } from "../constant";
-import { StatusCode } from "../enums/status";
-import jwt from "jsonwebtoken";
-
-export const isAuthenticated = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    // Extract JWT token from request header
-    const authorize = req.headers.authorization;
-    if (!authorize || !authorize.startsWith("Bearer ")) {
-      throw new Error("Unauthorized, Token not provided");
-    }
-    const token = authorize.split(" ")[1];
-
-    // Verify token authenticity
-    const decodedToken = jwt.verify(token, CRYPTOHASH) as { id: string };
-    const { id } = decodedToken;
-
-    req.id = id;
-
-    return next();
-  } catch (err) {
-    return res.status(StatusCode.Unauthorized).json({
-      message:"Unauthorized, Token not valid",
-    });
+  if (!authHeader) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "No token provided" });
   }
-};*/
 
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Invalid token format" });
+  }
+
+  try {
+    // Verify token and extract user ID and role
+    const decoded = jwt.verify(token, CRYPTOHASH) as TokenPayload;
+    req.user = { id: decoded.id };
+    req.role = decoded.role;
+
+    next();
+  } catch (error) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Invalid token" });
+  }
+};
+
+export { authenticateUser };

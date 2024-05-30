@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelAppointment = exports.completedAppointment = exports.createAppointment = void 0;
+exports.getUpcomingAppointments = exports.cancelAppointment = exports.completedAppointment = exports.createAppointment = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const status_1 = require("../../enums/status");
 ``;
@@ -23,12 +23,16 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
     const requestBody = req.body;
     if (!userId) {
-        return res.status(status_1.StatusCode.BadRequest).json({ message: "User ID is required" });
+        return res
+            .status(status_1.StatusCode.BadRequest)
+            .json({ message: "User ID is required" });
     }
     try {
-        const { date, startTime, endTime, period, appointmentType, doctorId } = requestBody;
+        const { date, startTime, endTime, period, appointmentType, doctorsId } = requestBody;
         if (period !== "Morning" && period !== "Evening") {
-            return res.status(status_1.StatusCode.BadRequest).json({ message: "Invalid period" });
+            return res
+                .status(status_1.StatusCode.BadRequest)
+                .json({ message: "Invalid period" });
         }
         const createAppointment = yield prisma_1.default.appointment.create({
             data: {
@@ -39,18 +43,19 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 period: period,
                 status: client_1.AppointmentStatus.Pending,
                 usersId: userId,
-                doctorsId: doctorId,
+                doctorsId: doctorsId,
             },
         });
-        if (!createAppointment) {
-            return res.status(status_1.StatusCode.InternalServerError).json({ message: "Failed to create appointment" });
-        }
         return res.status(status_1.StatusCode.Created).json({
-            message: "Appointment created successfully", data: createAppointment,
+            message: "Appointment created successfully",
+            data: createAppointment,
         });
     }
     catch (err) {
-        return res.status(status_1.StatusCode.InternalServerError).json({ message: "Failed to create appointment" });
+        console.error("Error creating appointment:", err); // Log the actual error
+        return res
+            .status(status_1.StatusCode.InternalServerError)
+            .json({ message: "Failed to create appointment" });
     }
 });
 exports.createAppointment = createAppointment;
@@ -150,3 +155,40 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.cancelAppointment = cancelAppointment;
+const getUpcomingAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    // @ts-ignore
+    const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.id;
+    if (!userId) {
+        return res
+            .status(status_1.StatusCode.BadRequest)
+            .json({ message: "User ID is required" });
+    }
+    try {
+        const upcomingAppointments = yield prisma_1.default.appointment.findMany({
+            where: {
+                usersId: userId,
+                date: {
+                    gte: new Date().toISOString(),
+                },
+                status: {
+                    in: [client_1.AppointmentStatus.Pending],
+                },
+            },
+            orderBy: {
+                date: "asc",
+            },
+        });
+        return res.status(status_1.StatusCode.Success).json({
+            message: "Upcoming appointments retrieved successfully",
+            data: upcomingAppointments,
+        });
+    }
+    catch (error) {
+        console.error("Error retrieving upcoming appointments:", error);
+        return res
+            .status(status_1.StatusCode.InternalServerError)
+            .json({ message: "Failed to retrieve upcoming appointments" });
+    }
+});
+exports.getUpcomingAppointments = getUpcomingAppointments;

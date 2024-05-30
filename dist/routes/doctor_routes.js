@@ -26,12 +26,12 @@ router.get("/doctor/appointments/:date", appointments_1.getAppointmentsByDate);
 // mark appointments
 router.put("/appointments/:id/end", appointments_1.AppointmentAsEnded);
 //settings
-router.put("/doctor/settings/password", isAuthenticated_1.isAuthenticated, settings_1.updateDoctorPassword);
-router.put("/doctor/settings/edit-profile", isAuthenticated_1.isAuthenticated, settings_1.editDoctorProfile);
-router.put("/doctor/settings/notification", isAuthenticated_1.isAuthenticated, settings_1.updateNotificationSettings);
+router.put("/doctor/settings/password", isAuthenticated_1.authenticateUser, settings_1.updateDoctorPassword);
+router.put("/doctor/settings/edit-profile", isAuthenticated_1.authenticateUser, settings_1.editDoctorProfile);
+router.put("/doctor/settings/notification", isAuthenticated_1.authenticateUser, settings_1.updateNotificationSettings);
 // chats
-router.post("/doctor/chat/sessions", isAuthenticated_1.isAuthenticated, chat_controller_1.createChatSession);
-router.post("/doctor/chat/messages", isAuthenticated_1.isAuthenticated, chat_controller_1.sendMessage);
-router.get("/doctor/chat/messages/:sessionId", isAuthenticated_1.isAuthenticated, chat_controller_1.getMessageHistory);
+router.post("/doctor/chat/sessions", isAuthenticated_1.authenticateUser, chat_controller_1.createChatSession);
+router.post("/doctor/chat/messages", isAuthenticated_1.authenticateUser, chat_controller_1.sendMessage);
+router.get("/doctor/chat/messages/:sessionId", isAuthenticated_1.authenticateUser, chat_controller_1.getMessageHistory);
 const DoctorthRouter = router;
 exports.default = DoctorthRouter;

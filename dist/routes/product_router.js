@@ -12,18 +12,18 @@ const savedProductController_1 = require("../controllers/products/savedProductCo
 const router = express_1.default.Router();
 // Product router
 router.get("/products", product_controller_1.getAllProduct);
-router.get("/product/:id", isAuthenticated_1.isAuthenticated, product_controller_1.getById);
+router.get("/product/:id", isAuthenticated_1.authenticateUser, product_controller_1.getById);
 router.post("/product/create", product_controller_1.createProduct);
-router.delete("/product/delete/:id", isAuthenticated_1.isAuthenticated, product_controller_1.deleteProduct);
+router.delete("/product/delete/:id", isAuthenticated_1.authenticateUser, product_controller_1.deleteProduct);
 // Cart router
-router.post("/cart/create/:userId/:productId", isAuthenticated_1.isAuthenticated, cart_controller_1.createCart);
-router.get("/cart", isAuthenticated_1.isAuthenticated, cart_controller_1.getAllCart);
-router.delete("/cart/remove/:id", isAuthenticated_1.isAuthenticated, cart_controller_1.removeCart);
+router.post("/cart/create/:userId/:productId", isAuthenticated_1.authenticateUser, cart_controller_1.createCart);
+router.get("/cart", isAuthenticated_1.authenticateUser, cart_controller_1.getAllCart);
+router.delete("/cart/remove/:id", isAuthenticated_1.authenticateUser, cart_controller_1.removeCart);
 // Save Product router
-router.post("/save/create", isAuthenticated_1.isAuthenticated, savedProductController_1.createSave);
-router.get("/save", isAuthenticated_1.isAuthenticated, savedProductController_1.getAllSave);
-router.delete("/save/delete/:id", isAuthenticated_1.isAuthenticated, savedProductController_1.removeSave);
+router.post("/save/create", isAuthenticated_1.authenticateUser, savedProductController_1.createSave);
+router.get("/save", isAuthenticated_1.authenticateUser, savedProductController_1.getAllSave);
+router.delete("/save/delete/:id", isAuthenticated_1.authenticateUser, savedProductController_1.removeSave);
 // shipping route
-router.post("/shipping/:userId", isAuthenticated_1.isAuthenticated, shipping_controller_1.handleShipping);
+router.post("/shipping/:userId", isAuthenticated_1.authenticateUser, shipping_controller_1.handleShipping);
 const productRouter = router;
 exports.default = productRouter;

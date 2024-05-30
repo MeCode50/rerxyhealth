@@ -1,14 +1,20 @@
 import express from "express";
-import { isAuthenticated, } from "../middleware/isAuthenticated";
-import {createAppointment,cancelAppointment,} from "../controllers/appointment/create_appointment_controller";
+import { authenticateUser } from "../middleware/isAuthenticated";
+import {
+  createAppointment,
+  cancelAppointment,
+  getUpcomingAppointments,
+} from "../controllers/appointment/create_appointment_controller";
 import {getAppointmentByDate,getUsersAppointment,} from "../controllers/appointment/get_user_appointment";
-import { verifyUserToken } from "../middleware/authmiddleware";
 const app = express.Router();
 
-app.post("/appointment/create", verifyUserToken, createAppointment);
-app.delete("/appointment/cancel/:appointmentId", isAuthenticated, cancelAppointment);
+app.post("/appointment/create", authenticateUser, createAppointment);
+app.delete(
+  "/appointment/cancel/:appointmentId",authenticateUser,cancelAppointment,
+);
 
-app.get("/appointment/me", isAuthenticated, getUsersAppointment);
-app.get("/appointment/:date", isAuthenticated, getAppointmentByDate);
+app.get("/appointment/me", authenticateUser, getUsersAppointment);
+app.get("/appointment/:date", authenticateUser, getAppointmentByDate);
+app.get("/appointments/upcoming", authenticateUser, getUpcomingAppointments);
 
 export const appointmentRouter = app;

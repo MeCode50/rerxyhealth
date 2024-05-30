@@ -10,7 +10,7 @@ import {
   editDoctorProfile,
   updateNotificationSettings,
 } from "../controllers/doctors/settings";
-import { isAuthenticated } from "../middleware/isAuthenticated";
+import { authenticateUser } from "../middleware/isAuthenticated";
 import {
   createChatSession,
   sendMessage,
@@ -38,15 +38,21 @@ router.get("/doctor/appointments/:date", getAppointmentsByDate);
 router.put("/appointments/:id/end", AppointmentAsEnded);
 
 //settings
-router.put("/doctor/settings/password", isAuthenticated, updateDoctorPassword);
-router.put("/doctor/settings/edit-profile", isAuthenticated, editDoctorProfile);
-router.put("/doctor/settings/notification",isAuthenticated,updateNotificationSettings,
+router.put("/doctor/settings/password", authenticateUser, updateDoctorPassword);
+router.put("/doctor/settings/edit-profile", authenticateUser, editDoctorProfile);
+router.put(
+  "/doctor/settings/notification",
+  authenticateUser,
+  updateNotificationSettings,
 );
 
 // chats
-router.post("/doctor/chat/sessions", isAuthenticated, createChatSession);
-router.post("/doctor/chat/messages", isAuthenticated, sendMessage);
-router.get("/doctor/chat/messages/:sessionId",isAuthenticated,getMessageHistory,
+router.post("/doctor/chat/sessions", authenticateUser, createChatSession);
+router.post("/doctor/chat/messages", authenticateUser, sendMessage);
+router.get(
+  "/doctor/chat/messages/:sessionId",
+  authenticateUser,
+  getMessageHistory,
 );
 
 const DoctorthRouter = router;

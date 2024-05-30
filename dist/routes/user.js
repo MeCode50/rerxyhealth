@@ -11,10 +11,10 @@ const get_transaction_pin_1 = require("../controllers/users/get_transaction_pin"
 const verify_transaction_pin_1 = require("../controllers/users/verify_transaction_pin");
 const get_doctors_1 = require("../controllers/appointment/get_doctors");
 const router = express_1.default.Router();
-router.get("/profile/me", isAuthenticated_1.isAuthenticated, profile_1.getUserProfile);
-router.put("/profile/update", isAuthenticated_1.isAuthenticated, profile_1.updateUserProfile);
-router.get("/profile/transaction_pin", isAuthenticated_1.isAuthenticated, get_transaction_pin_1.get_transaction_pin);
-router.post("/profile/verify_pin", isAuthenticated_1.isAuthenticated, verify_transaction_pin_1.verify_transaction_pin);
+router.get("/profile/me", isAuthenticated_1.authenticateUser, profile_1.getUserProfile);
+router.put("/profile/update", isAuthenticated_1.authenticateUser, profile_1.updateUserProfile);
+router.get("/profile/transaction_pin", isAuthenticated_1.authenticateUser, get_transaction_pin_1.get_transaction_pin);
+router.post("/profile/verify_pin", isAuthenticated_1.authenticateUser, verify_transaction_pin_1.verify_transaction_pin);
 router.get("/doctors", get_doctors_1.getDoctorsByUsers);
 const profileRouter = router;
 exports.default = profileRouter;

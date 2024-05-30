@@ -1,5 +1,5 @@
 import express from "express";
-import { isAuthenticated } from "../middleware/isAuthenticated";
+import { authenticateUser } from "../middleware/isAuthenticated";
 import { imageUpload, pdfUpload } from "../middleware/multer";
 import { uploadFileToCloudinary } from "../controllers/cloudinary";
 

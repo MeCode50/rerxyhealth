@@ -9,16 +9,22 @@ export const createAppointment = async (req: Request, res: Response) => {
   const requestBody = req.body;
 
   if (!userId) {
-    return res.status(StatusCode.BadRequest).json({ message: "User ID is required" });
+    return res
+      .status(StatusCode.BadRequest)
+      .json({ message: "User ID is required" });
   }
-try {
-  const { date, startTime, endTime, period, appointmentType, doctorId } = requestBody;
 
-  if (period !== "Morning" && period !== "Evening") {
-    return res.status(StatusCode.BadRequest).json({ message: "Invalid period" });
+  try {
+    const { date, startTime, endTime, period, appointmentType, doctorsId } =
+      requestBody;
+
+    if (period !== "Morning" && period !== "Evening") {
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "Invalid period" });
     }
 
-  const createAppointment = await prisma.appointment.create({
+    const createAppointment = await prisma.appointment.create({
       data: {
         date,
         startTime,
@@ -26,23 +32,22 @@ try {
         appointmentType,
         period: period as "Morning" | "Evening",
         status: AppointmentStatus.Pending,
-        usersId: userId, 
-        doctorsId: doctorId,
+        usersId: userId,
+        doctorsId: doctorsId,
       },
     });
 
-  if (!createAppointment) {
-    return res.status(StatusCode.InternalServerError).json({ message: "Failed to create appointment" });
-    }
-
     return res.status(StatusCode.Created).json({
-    message: "Appointment created successfully",data: createAppointment,
+      message: "Appointment created successfully",
+      data: createAppointment,
     });
   } catch (err) {
-    return res.status(StatusCode.InternalServerError).json({ message: "Failed to create appointment" });
+    console.error("Error creating appointment:", err); // Log the actual error
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Failed to create appointment" });
   }
 };
-
 
 
 /*export const completedAppointment = async () => {
@@ -146,5 +151,43 @@ export const cancelAppointment = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error canceling appointment:", error);
     return res.status(StatusCode.InternalServerError).json({ message: "Failed to cancel appointment" });
+  }
+};
+
+export const getUpcomingAppointments = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res
+      .status(StatusCode.BadRequest)
+      .json({ message: "User ID is required" });
+  }
+
+  try {
+    const upcomingAppointments = await prisma.appointment.findMany({
+      where: {
+        usersId: userId,
+        date: {
+          gte: new Date().toISOString(),
+        },
+        status: {
+          in: [AppointmentStatus.Pending],
+        },
+      },
+      orderBy: {
+        date: "asc",
+      },
+    });
+
+    return res.status(StatusCode.Success).json({
+      message: "Upcoming appointments retrieved successfully",
+      data: upcomingAppointments,
+    });
+  } catch (error) {
+    console.error("Error retrieving upcoming appointments:", error);
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Failed to retrieve upcoming appointments" });
   }
 };

@@ -158,18 +158,20 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
   // @ts-ignore
   const userId = req.user?.id;
 
-  if (!userId) {
-    return res
-      .status(StatusCode.BadRequest)
-      .json({ message: "User ID is required" });
+  if (!userId) {return res.status(StatusCode.BadRequest).json({ message: "User ID is required" });
   }
 
   try {
+    console.log("Fetching upcoming appointments for user:", userId);
+
+    const currentDateTime = new Date().toISOString();
+    console.log("Current DateTime:", currentDateTime);
+
     const upcomingAppointments = await prisma.appointment.findMany({
       where: {
         usersId: userId,
         date: {
-          gte: new Date().toISOString(),
+          gte: currentDateTime,
         },
         status: {
           in: [AppointmentStatus.Pending],
@@ -180,14 +182,13 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
       },
     });
 
-    return res.status(StatusCode.Success).json({
-      message: "Upcoming appointments retrieved successfully",
+    console.log("Upcoming Appointments:", upcomingAppointments);
+
+    return res.status(StatusCode.Success).json({message: "Upcoming appointments retrieved successfully",
       data: upcomingAppointments,
     });
   } catch (error) {
     console.error("Error retrieving upcoming appointments:", error);
-    return res
-      .status(StatusCode.InternalServerError)
-      .json({ message: "Failed to retrieve upcoming appointments" });
+    return res.status(StatusCode.InternalServerError).json({ message: "Failed to retrieve upcoming appointments" });
   }
 };

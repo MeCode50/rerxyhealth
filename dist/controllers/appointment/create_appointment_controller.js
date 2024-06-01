@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUpcomingAppointments = exports.cancelAppointment = exports.completedAppointment = exports.createAppointment = void 0;
+exports.getPastAppointments = exports.getUpcomingAppointments = exports.cancelAppointment = exports.completedAppointment = exports.createAppointment = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const status_1 = require("../../enums/status");
 ``;
@@ -61,30 +61,42 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.createAppointment = createAppointment;
 /*export const completedAppointment = async () => {
   try {
-    // Get the current time
     const currentTime = new Date();
+    console.log(`Current time: ${currentTime}`);
 
-    // Logic to update appointments to "Completed"
     const completedAppointments = await prisma.appointment.findMany({
       where: {
         status: AppointmentStatus.Pending,
         endTime: {
-          lt: currentTime.toISOString(),
+          lte: currentTime.toISOString(),
         },
       },
     });
 
-    // Update status of completed appointments to "Completed"
+    console.log(
+      `Pending appointments to be checked: ${completedAppointments.length}`,
+    );
+
     await Promise.all(
       completedAppointments.map(async (appointment) => {
-        await prisma.appointment.update({
-          where: { id: appointment.id },
-          data: { status: AppointmentStatus.Completed },
-        });
+        const endTime = new Date(appointment.endTime);
+        console.log(
+          `Checking appointment ID ${appointment.id}: endTime = ${endTime}`,
+        );
+
+        if (currentTime >= endTime) {
+          console.log(`Completing appointment ID ${appointment.id}`);
+          await prisma.appointment.update({
+            where: { id: appointment.id },
+            data: { status: AppointmentStatus.Completed },
+          });
+          console.log(
+            `Appointment with ID ${appointment.id} has been completed.`,
+          );
+        }
       }),
     );
 
-    // Log success message after updating appointments
     console.log("Pending appointments successfully completed.");
   } catch (error) {
     console.error("Error completing appointments:", error);
@@ -160,16 +172,17 @@ const getUpcomingAppointments = (req, res) => __awaiter(void 0, void 0, void 0, 
     // @ts-ignore
     const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.id;
     if (!userId) {
-        return res
-            .status(status_1.StatusCode.BadRequest)
-            .json({ message: "User ID is required" });
+        return res.status(status_1.StatusCode.BadRequest).json({ message: "User ID is required" });
     }
     try {
+        console.log("Fetching upcoming appointments for user:", userId);
+        const currentDateTime = new Date().toISOString();
+        console.log("Current DateTime:", currentDateTime);
         const upcomingAppointments = yield prisma_1.default.appointment.findMany({
             where: {
                 usersId: userId,
                 date: {
-                    gte: new Date().toISOString(),
+                    gte: currentDateTime,
                 },
                 status: {
                     in: [client_1.AppointmentStatus.Pending],
@@ -179,16 +192,49 @@ const getUpcomingAppointments = (req, res) => __awaiter(void 0, void 0, void 0, 
                 date: "asc",
             },
         });
-        return res.status(status_1.StatusCode.Success).json({
-            message: "Upcoming appointments retrieved successfully",
+        console.log("Upcoming Appointments:", upcomingAppointments);
+        return res.status(status_1.StatusCode.Success).json({ message: "Upcoming appointments retrieved successfully",
             data: upcomingAppointments,
         });
     }
     catch (error) {
         console.error("Error retrieving upcoming appointments:", error);
-        return res
-            .status(status_1.StatusCode.InternalServerError)
-            .json({ message: "Failed to retrieve upcoming appointments" });
+        return res.status(status_1.StatusCode.InternalServerError).json({ message: "Failed to retrieve upcoming appointments" });
     }
 });
 exports.getUpcomingAppointments = getUpcomingAppointments;
+const getPastAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _d;
+    // @ts-ignore
+    const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.id;
+    if (!userId) {
+        return res
+            .status(status_1.StatusCode.BadRequest)
+            .json({ message: "User ID is required" });
+    }
+    try {
+        const pastAppointments = yield prisma_1.default.appointment.findMany({
+            where: {
+                usersId: userId,
+                date: {
+                    lt: new Date().toISOString(),
+                },
+                status: client_1.AppointmentStatus.Completed,
+            },
+            orderBy: {
+                date: "desc",
+            },
+        });
+        return res.status(status_1.StatusCode.Success).json({
+            message: "Past appointments retrieved successfully",
+            data: pastAppointments,
+        });
+    }
+    catch (error) {
+        console.error("Error retrieving past appointments:", error);
+        return res
+            .status(status_1.StatusCode.InternalServerError)
+            .json({ message: "Failed to retrieve past appointments" });
+    }
+});
+exports.getPastAppointments = getPastAppointments;

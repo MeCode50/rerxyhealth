@@ -4,6 +4,7 @@ import {
   createAppointment,
   cancelAppointment,
   getUpcomingAppointments,
+  getPastAppointments,
 } from "../controllers/appointment/create_appointment_controller";
 import {getAppointmentByDate,getUsersAppointment,} from "../controllers/appointment/get_user_appointment";
 const app = express.Router();
@@ -16,5 +17,5 @@ app.delete(
 app.get("/appointment/me", authenticateUser, getUsersAppointment);
 app.get("/appointment/:date", authenticateUser, getAppointmentByDate);
 app.get("/appointments/upcoming", authenticateUser, getUpcomingAppointments);
-
+app.get("/appointments/past",authenticateUser, getPastAppointments);
 export const appointmentRouter = app;

@@ -20,6 +20,7 @@ const diagnostics_routes_1 = __importDefault(require("./routes/diagnostics_route
 const image_routes_1 = __importDefault(require("./routes/image_routes"));
 const doctor_routes_1 = __importDefault(require("./routes/doctor_routes"));
 const dashboard_1 = __importDefault(require("./routes/dashboard"));
+require("./utils/scheduler");
 require("dotenv").config();
 // Routes handlers
 const routes = [

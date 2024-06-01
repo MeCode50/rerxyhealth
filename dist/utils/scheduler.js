@@ -20,10 +20,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
     console.error("Error in scheduler:", error);
   }
 });*/
-const create_appointment_controller_1 = require("../controllers/appointment/create_appointment_controller");
-//import cron from "node-cron";
+/*import { completedAppointment } from "../controllers/appointment/create_appointment_controller";
 const cron = require("node-cron");
+
 // Scheduler to run every minute
+cron.schedule("* * * * *", async () => {
+  try {
+    console.log("Scheduler running...");
+    await completedAppointment();
+  } catch (error) {
+    console.error("Error in scheduler:", error);
+  }
+});
+
+
+mport { completedAppointment } from "../controllers/appointment/create_appointment_controller";
+*/
+//import cron from "node-cron";
+const create_appointment_controller_1 = require("../controllers/appointment/create_appointment_controller");
+const cron = require("node-cron");
 cron.schedule("* * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("Scheduler running...");

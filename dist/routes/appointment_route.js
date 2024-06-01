@@ -14,4 +14,5 @@ app.delete("/appointment/cancel/:appointmentId", isAuthenticated_1.authenticateU
 app.get("/appointment/me", isAuthenticated_1.authenticateUser, get_user_appointment_1.getUsersAppointment);
 app.get("/appointment/:date", isAuthenticated_1.authenticateUser, get_user_appointment_1.getAppointmentByDate);
 app.get("/appointments/upcoming", isAuthenticated_1.authenticateUser, create_appointment_controller_1.getUpcomingAppointments);
+app.get("/appointments/past", isAuthenticated_1.authenticateUser, create_appointment_controller_1.getPastAppointments);
 exports.appointmentRouter = app;

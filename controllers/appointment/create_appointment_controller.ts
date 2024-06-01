@@ -2,47 +2,51 @@ import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";``
 import { AppointmentStatus } from "@prisma/client";
+import moment from "moment-timezone"
+
 
 export const createAppointment = async (req: Request, res: Response) => {
-  // @ts-ignore
   const userId = req.user?.id;
-  const requestBody = req.body;
+  const { date, startTime, endTime, period, appointmentType, doctorsId } =
+    req.body;
 
-  if (!userId) {
-    return res
-      .status(StatusCode.BadRequest)
-      .json({ message: "User ID is required" });
+  if (!userId) {return res.status(StatusCode.BadRequest).json({ message: "User ID is required" });
+  }
+
+  if (!date ||!startTime ||!endTime ||!period ||!appointmentType ||!doctorsId
+  ) {return res.status(StatusCode.BadRequest).json({ message: "All fields are required" });
   }
 
   try {
-    const { date, startTime, endTime, period, appointmentType, doctorsId } =
-      requestBody;
+    const parsedDate = moment.tz(date, "Africa/Lagos");
+    const startTimeUTC = moment.tz(`${date} ${startTime}`, "YYYY-MM-DD HH:mm", "Africa/Lagos").toISOString();
+    const endTimeUTC = moment.tz(`${date} ${endTime}`, "YYYY-MM-DD HH:mm", "Africa/Lagos").toISOString();
 
     if (period !== "Morning" && period !== "Evening") {
-      return res
-        .status(StatusCode.BadRequest)
-        .json({ message: "Invalid period" });
+      return res.status(StatusCode.BadRequest).json({ message: "Invalid period" });
     }
 
-    const createAppointment = await prisma.appointment.create({
+    const newAppointment = await prisma.appointment.create({
       data: {
-        date,
-        startTime,
-        endTime,
+        date: parsedDate.toISOString(), 
+        startTime: startTimeUTC,
+        endTime: endTimeUTC,
+        period,
         appointmentType,
-        period: period as "Morning" | "Evening",
-        status: AppointmentStatus.Pending,
+        status: "Pending",
         usersId: userId,
-        doctorsId: doctorsId,
+        doctorsId,
       },
     });
 
+    console.log("New Appointment Data:", newAppointment);
+
     return res.status(StatusCode.Created).json({
       message: "Appointment created successfully",
-      data: createAppointment,
+      data: newAppointment,
     });
   } catch (err) {
-    console.error("Error creating appointment:", err); // Log the actual error
+    console.error("Error creating appointment:", err);
     return res
       .status(StatusCode.InternalServerError)
       .json({ message: "Failed to create appointment" });
@@ -50,75 +54,48 @@ export const createAppointment = async (req: Request, res: Response) => {
 };
 
 
-/*export const completedAppointment = async () => {
+export const completedAppointment = async () => {
   try {
-    // Get the current time
-    const currentTime = new Date();
+    // Get the current date and time in Africa/Lagos timezone
+    const currentDateTime = moment().tz("Africa/Lagos").toISOString();
+    console.log("Current DateTime (Africa/Lagos):", currentDateTime);
 
-    // Logic to update appointments to "Completed"
-    const completedAppointments = await prisma.appointment.findMany({
+    // Find all appointments that should be marked as completed
+    const appointmentsToComplete = await prisma.appointment.findMany({
       where: {
-        status: AppointmentStatus.Pending,
+        status: "Pending",
         endTime: {
-          lt: currentTime.toISOString(), 
+          lte: currentDateTime, 
         },
       },
     });
 
-    // Update status of completed appointments to "Completed"
-    await Promise.all(
-      completedAppointments.map(async (appointment) => {
-        await prisma.appointment.update({
-          where: { id: appointment.id },
-          data: { status: AppointmentStatus.Completed },
-        });
-      }),
-    );
+    if (appointmentsToComplete.length > 0) {
+      console.log("Appointments to complete:", appointmentsToComplete);
 
-    // Log success message after updating appointments
-    console.log("Pending appointments successfully completed.");
-  } catch (error) {
-    console.error("Error completing appointments:", error);
-  }
-};*/
+      // Update the status of all matching appointments to "Completed"
+      const updateResults = await prisma.appointment.updateMany({
+        where: {
+          id: {
+            in: appointmentsToComplete.map((appointment) => appointment.id),
+          },
+        },
+        data: {
+          status: "Completed",
+        },
+      });
 
-export const completedAppointment = async () => {
-try {
-  const currentTime = new Date();
-  const completedAppointments = await prisma.appointment.findMany({
-    where: {
-    status: AppointmentStatus.Pending,
-    endTime: {
-    lte: currentTime.toISOString(), 
-},
-  },
-    });
-
-  await Promise.all
-    completedAppointments.map(async (appointment) => {
-      const endTime = new Date(appointment.endTime);
-        
-      if (currentTime >= endTime) {
-        console.log("Appointment Start Time: ", appointment.startTime);
-        console.log("Appointment End Time: ", appointment.endTime);
-
-          await prisma.appointment.update({
-            where: { id: appointment.id },
-            data: { status: AppointmentStatus.Completed },
-         });
-        console.log(`Appointment with ID ${appointment.id} has been completed.`);
-      }
-    });
-
-      console.log("Pending appointments successfully completed.");
-    } catch (error) {
-      console.error("Error completing appointments:", error);
+      console.log("Update results:", updateResults);
+    } else {
+      console.log("No appointments to complete at this time.");
     }
+  } catch (error) {
+    console.error("Error in completedAppointment function:", error);
+  }
 };
 
 
 export const cancelAppointment = async (req: Request, res: Response) => {
-  
   const userId = req.user?.id;
   const { appointmentId } = req.params;
   try {
@@ -192,3 +169,40 @@ export const getUpcomingAppointments = async (req: Request, res: Response) => {
     return res.status(StatusCode.InternalServerError).json({ message: "Failed to retrieve upcoming appointments" });
   }
 };
+
+export const getPastAppointments = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res
+      .status(StatusCode.BadRequest)
+      .json({ message: "User ID is required" });
+  }
+
+  try {
+    const pastAppointments = await prisma.appointment.findMany({
+      where: {
+        usersId: userId,
+        date: {
+          lt: new Date().toISOString(),
+        },
+        status: AppointmentStatus.Completed, 
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return res.status(StatusCode.Success).json({
+      message: "Past appointments retrieved successfully",
+      data: pastAppointments,
+    });
+  } catch (error) {
+    console.error("Error retrieving past appointments:", error);
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Failed to retrieve past appointments" });
+  }
+};
+

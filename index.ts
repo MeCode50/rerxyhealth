@@ -16,7 +16,7 @@ import imageRouter from "./routes/image_routes";
 import DoctorthRouter from "./routes/doctor_routes";
 import superAdminRouter from "./routes/dashboard";
 import path from "path";
-
+import "./utils/scheduler"
 require("dotenv").config();
 
 // Routes handlers

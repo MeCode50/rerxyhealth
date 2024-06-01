@@ -4,7 +4,10 @@ import { StatusCode } from "../../enums/status";
 
 
 
-export const getUsersAppointment = async (req: Request, res: Response) => {
+export const getUsersAppointmentByUser = async (
+  req: Request,
+  res: Response,
+) => {
   //@ts-ignore
   const userId = req?.id;
   try {
@@ -12,23 +15,44 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
       where: {
         usersId: userId,
       },
-      include: {
-        Doctors: true, 
+      select: {
+        id: true,
+        date: true,
+        startTime: true,
+        endTime: true,
+        hasEnded: true,
+        period: true,
+        status: true,
+        appointmentType: true,
+        usersId: true,
+        doctorsId: true,
+        Doctors: {
+          select: {
+            firstName: true,
+            lastName: true,
+            specialization: true,
+            // Add any other fields you need here
+          },
+        },
       },
     });
 
-    if (!getAppointment)
+    if (!getAppointment || getAppointment.length === 0) {
       return res
         .status(StatusCode.NoContent)
         .json({ message: "No Appointments" });
+    }
+
     return res
       .status(StatusCode.OK)
       .json({ message: "My appointments", data: getAppointment });
   } catch (err) {
-    return err;
+    console.error("Error fetching appointments:", err);
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Failed to fetch appointments" });
   }
 };
-
 
 //fiter through appointment
 export const getAppointmentByDate = async (req: Request, res: Response) => {

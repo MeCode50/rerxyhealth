@@ -6,15 +6,13 @@ import {
   getUpcomingAppointments,
   getPastAppointments,
 } from "../controllers/appointment/create_appointment_controller";
-import {getAppointmentByDate,getUsersAppointment,} from "../controllers/appointment/get_user_appointment";
+import {getAppointmentByDate,getUsersAppointmentByUser,} from "../controllers/appointment/get_user_appointment";
 const app = express.Router();
 
 app.post("/appointment/create", authenticateUser, createAppointment);
-app.delete(
-  "/appointment/cancel/:appointmentId",authenticateUser,cancelAppointment,
-);
+app.delete("/appointment/cancel/:appointmentId",authenticateUser,cancelAppointment,);
 
-app.get("/appointment/me", authenticateUser, getUsersAppointment);
+app.get("/appointment/me", authenticateUser, getUsersAppointmentByUser);
 app.get("/appointment/:date", authenticateUser, getAppointmentByDate);
 app.get("/appointments/upcoming", authenticateUser, getUpcomingAppointments);
 app.get("/appointments/past",authenticateUser, getPastAppointments);

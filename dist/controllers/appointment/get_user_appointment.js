@@ -39,7 +39,6 @@ const getUsersAppointmentByUser = (req, res) => __awaiter(void 0, void 0, void 0
                         firstName: true,
                         lastName: true,
                         specialization: true,
-                        // Add any other fields you need here
                     },
                 },
             },

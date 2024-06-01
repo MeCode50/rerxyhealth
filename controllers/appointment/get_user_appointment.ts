@@ -31,7 +31,6 @@ export const getUsersAppointmentByUser = async (
             firstName: true,
             lastName: true,
             specialization: true,
-            // Add any other fields you need here
           },
         },
       },

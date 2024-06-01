@@ -17,119 +17,85 @@ const prisma_1 = __importDefault(require("../../prisma"));
 const status_1 = require("../../enums/status");
 ``;
 const client_1 = require("@prisma/client");
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    // @ts-ignore
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
-    const requestBody = req.body;
+    const { date, startTime, endTime, period, appointmentType, doctorsId } = req.body;
     if (!userId) {
-        return res
-            .status(status_1.StatusCode.BadRequest)
-            .json({ message: "User ID is required" });
+        return res.status(status_1.StatusCode.BadRequest).json({ message: "User ID is required" });
+    }
+    if (!date || !startTime || !endTime || !period || !appointmentType || !doctorsId) {
+        return res.status(status_1.StatusCode.BadRequest).json({ message: "All fields are required" });
     }
     try {
-        const { date, startTime, endTime, period, appointmentType, doctorsId } = requestBody;
+        const parsedDate = moment_timezone_1.default.tz(date, "Africa/Lagos");
+        const startTimeUTC = moment_timezone_1.default.tz(`${date} ${startTime}`, "YYYY-MM-DD HH:mm", "Africa/Lagos").toISOString();
+        const endTimeUTC = moment_timezone_1.default.tz(`${date} ${endTime}`, "YYYY-MM-DD HH:mm", "Africa/Lagos").toISOString();
         if (period !== "Morning" && period !== "Evening") {
-            return res
-                .status(status_1.StatusCode.BadRequest)
-                .json({ message: "Invalid period" });
+            return res.status(status_1.StatusCode.BadRequest).json({ message: "Invalid period" });
         }
-        const createAppointment = yield prisma_1.default.appointment.create({
+        const newAppointment = yield prisma_1.default.appointment.create({
             data: {
-                date,
-                startTime,
-                endTime,
+                date: parsedDate.toISOString(),
+                startTime: startTimeUTC,
+                endTime: endTimeUTC,
+                period,
                 appointmentType,
-                period: period,
-                status: client_1.AppointmentStatus.Pending,
+                status: "Pending",
                 usersId: userId,
-                doctorsId: doctorsId,
+                doctorsId,
             },
         });
+        console.log("New Appointment Data:", newAppointment);
         return res.status(status_1.StatusCode.Created).json({
             message: "Appointment created successfully",
-            data: createAppointment,
+            data: newAppointment,
         });
     }
     catch (err) {
-        console.error("Error creating appointment:", err); // Log the actual error
+        console.error("Error creating appointment:", err);
         return res
             .status(status_1.StatusCode.InternalServerError)
             .json({ message: "Failed to create appointment" });
     }
 });
 exports.createAppointment = createAppointment;
-/*export const completedAppointment = async () => {
-  try {
-    const currentTime = new Date();
-    console.log(`Current time: ${currentTime}`);
-
-    const completedAppointments = await prisma.appointment.findMany({
-      where: {
-        status: AppointmentStatus.Pending,
-        endTime: {
-          lte: currentTime.toISOString(),
-        },
-      },
-    });
-
-    console.log(
-      `Pending appointments to be checked: ${completedAppointments.length}`,
-    );
-
-    await Promise.all(
-      completedAppointments.map(async (appointment) => {
-        const endTime = new Date(appointment.endTime);
-        console.log(
-          `Checking appointment ID ${appointment.id}: endTime = ${endTime}`,
-        );
-
-        if (currentTime >= endTime) {
-          console.log(`Completing appointment ID ${appointment.id}`);
-          await prisma.appointment.update({
-            where: { id: appointment.id },
-            data: { status: AppointmentStatus.Completed },
-          });
-          console.log(
-            `Appointment with ID ${appointment.id} has been completed.`,
-          );
-        }
-      }),
-    );
-
-    console.log("Pending appointments successfully completed.");
-  } catch (error) {
-    console.error("Error completing appointments:", error);
-  }
-};*/
 const completedAppointment = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const currentTime = new Date();
-        const completedAppointments = yield prisma_1.default.appointment.findMany({
+        // Get the current date and time in Africa/Lagos timezone
+        const currentDateTime = (0, moment_timezone_1.default)().tz("Africa/Lagos").toISOString();
+        console.log("Current DateTime (Africa/Lagos):", currentDateTime);
+        // Find all appointments that should be marked as completed
+        const appointmentsToComplete = yield prisma_1.default.appointment.findMany({
             where: {
-                status: client_1.AppointmentStatus.Pending,
+                status: "Pending",
                 endTime: {
-                    lte: currentTime.toISOString(),
+                    lte: currentDateTime,
                 },
             },
         });
-        yield Promise.all;
-        completedAppointments.map((appointment) => __awaiter(void 0, void 0, void 0, function* () {
-            const endTime = new Date(appointment.endTime);
-            if (currentTime >= endTime) {
-                console.log("Appointment Start Time: ", appointment.startTime);
-                console.log("Appointment End Time: ", appointment.endTime);
-                yield prisma_1.default.appointment.update({
-                    where: { id: appointment.id },
-                    data: { status: client_1.AppointmentStatus.Completed },
-                });
-                console.log(`Appointment with ID ${appointment.id} has been completed.`);
-            }
-        }));
-        console.log("Pending appointments successfully completed.");
+        if (appointmentsToComplete.length > 0) {
+            console.log("Appointments to complete:", appointmentsToComplete);
+            // Update the status of all matching appointments to "Completed"
+            const updateResults = yield prisma_1.default.appointment.updateMany({
+                where: {
+                    id: {
+                        in: appointmentsToComplete.map((appointment) => appointment.id),
+                    },
+                },
+                data: {
+                    status: "Completed",
+                },
+            });
+            console.log("Update results:", updateResults);
+        }
+        else {
+            console.log("No appointments to complete at this time.");
+        }
     }
     catch (error) {
-        console.error("Error completing appointments:", error);
+        console.error("Error in completedAppointment function:", error);
     }
 });
 exports.completedAppointment = completedAppointment;

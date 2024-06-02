@@ -107,6 +107,8 @@ model Appointment {
   user            Users    @relation(fields: [usersId], references: [id])
   usersId         String   @db.ObjectId
   doctorsId       String   @db.ObjectId
+  rating          Int?
+  review          String?
 }
 enum AppointmentStatus {
   Pending
@@ -130,11 +132,27 @@ model Doctors {
   soundEnabled       Boolean      @default(true)
   inviteFriendsEnabled       Boolean      @default(true)
   vibrationEnabled   Boolean      @default(true)
+   profilePicture         String?
+  experienceStartDate    DateTime
+  graduationYear         Int
+  school                 String
+  medicalLicensePicture  String
+  about                  String?
+  workingHours           WorkingHours[]
   Appointment        Appointment[]
   appointmentId      String?      @db.ObjectId
 }
  
 
+
+model WorkingHours {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  day       String
+  startTime String
+  endTime   String
+  doctorId  String   @db.ObjectId
+  doctor    Doctors   @relation(fields: [doctorId], references: [id])
+}
 model Products {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
   image           String

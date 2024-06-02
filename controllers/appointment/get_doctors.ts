@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
-const getDoctorsByUsers = async (req: Request, res: Response) => {
+const getAllDoctorsByUsers = async (req: Request, res: Response) => {
   try {
     const fetchDoctors = await prisma.doctors.findMany({
       select: {
@@ -32,4 +32,4 @@ const getDoctorsByUsers = async (req: Request, res: Response) => {
   }
 };
 
-export { getDoctorsByUsers };
+export { getAllDoctorsByUsers };

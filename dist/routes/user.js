@@ -15,6 +15,6 @@ router.get("/profile/me", isAuthenticated_1.authenticateUser, profile_1.getUserP
 router.put("/profile/update", isAuthenticated_1.authenticateUser, profile_1.updateUserProfile);
 router.get("/profile/transaction_pin", isAuthenticated_1.authenticateUser, get_transaction_pin_1.get_transaction_pin);
 router.post("/profile/verify_pin", isAuthenticated_1.authenticateUser, verify_transaction_pin_1.verify_transaction_pin);
-router.get("/doctors", get_doctors_1.getDoctorsByUsers);
+router.get("/doctors", get_doctors_1.getAllDoctorsByUsers);
 const profileRouter = router;
 exports.default = profileRouter;

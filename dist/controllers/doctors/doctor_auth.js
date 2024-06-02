@@ -14,13 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signinDoctor = exports.signupDoctor = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-//import jwt from "jsonwebtoken";
 const prisma_1 = __importDefault(require("../../prisma"));
 const jwt_helper_1 = require("../../helper/jwt_helper");
 const mailer_1 = require("../../services/nodemailer/mailer");
-// Signup  for doctors
+// Signup for doctors
 const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password, firstName, lastName, phoneNumber, specialization, country, state, certificate, } = req.body;
+    const { email, password, firstName, lastName, phoneNumber, specialization, country, state, certificate, profilePicture, experienceStartDate, graduationYear, school, medicalLicensePicture, about, } = req.body;
     try {
         const existingDoctor = yield prisma_1.default.doctors.findUnique({
             where: { email },
@@ -40,7 +39,13 @@ const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 country,
                 state,
                 certificate,
-                isApproved: false
+                profilePicture,
+                experienceStartDate: new Date(experienceStartDate),
+                graduationYear,
+                school,
+                medicalLicensePicture,
+                about,
+                isApproved: false,
             },
         });
         const { id } = newDoctor;
@@ -51,7 +56,13 @@ const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             template: "email_templates/welcome",
         };
         yield (0, mailer_1.sendMail)(Object.assign({ email }, emailDetails));
-        res.status(201).json({ message: "Doctor registered successfully", jwt, doctor: newDoctor });
+        res
+            .status(201)
+            .json({
+            message: "Doctor registered successfully",
+            jwt,
+            doctor: newDoctor,
+        });
     }
     catch (error) {
         console.error("Error signing up doctor:", error);
@@ -59,7 +70,7 @@ const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.signupDoctor = signupDoctor;
-// Signin  doctors
+// Signin doctors
 const signinDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -70,15 +81,18 @@ const signinDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.status(404).json({ message: "Doctor not found" });
         }
         if (!doctor.isApproved) {
-            return res.status(401).json({ message: "Account not yet approved. Please wai for admin approval" });
+            return res
+                .status(401)
+                .json({
+                message: "Account not yet approved. Please wait for admin approval",
+            });
         }
-        ;
         const passwordMatch = yield bcrypt_1.default.compare(password, doctor.password);
         if (!passwordMatch) {
             return res.status(401).json({ message: "Invalid email or password" });
         }
-        //onst token = jwt.sign({ email: doctor.email, id: doctor.id },"your_secret_key");
-        res.status(200).json({ message: "Signin successful" });
+        const jwt = (0, jwt_helper_1.signJWT)({ id: doctor.id });
+        res.status(200).json({ message: "Signin successful", jwt });
     }
     catch (error) {
         console.error("Error signing in doctor:", error);

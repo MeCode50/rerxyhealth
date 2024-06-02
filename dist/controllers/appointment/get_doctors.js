@@ -12,10 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDoctorsByUsers = void 0;
+exports.getAllDoctorsByUsers = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
 const status_1 = require("../../enums/status");
-const getDoctorsByUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllDoctorsByUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const fetchDoctors = yield prisma_1.default.doctors.findMany({
             select: {
@@ -44,4 +44,4 @@ const getDoctorsByUsers = (req, res) => __awaiter(void 0, void 0, void 0, functi
             .json({ message: "An error occurred" });
     }
 });
-exports.getDoctorsByUsers = getDoctorsByUsers;
+exports.getAllDoctorsByUsers = getAllDoctorsByUsers;

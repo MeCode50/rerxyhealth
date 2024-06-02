@@ -104,11 +104,9 @@ exports.signinDoctor = signinDoctor;
 const setWorkingHours = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { doctorId, workingHours } = req.body;
     try {
-        // Delete existing working hours for the doctor
         yield prisma_1.default.workingHours.deleteMany({
             where: { doctorId },
         });
-        // Create new working hours
         const newWorkingHours = yield prisma_1.default.workingHours.createMany({
             data: workingHours.map((hour) => (Object.assign(Object.assign({}, hour), { doctorId }))),
         });

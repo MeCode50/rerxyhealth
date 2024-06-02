@@ -33,5 +33,7 @@ router.put("/doctor/settings/notification", isAuthenticated_1.authenticateUser, 
 router.post("/doctor/chat/sessions", isAuthenticated_1.authenticateUser, chat_controller_1.createChatSession);
 router.post("/doctor/chat/messages", isAuthenticated_1.authenticateUser, chat_controller_1.sendMessage);
 router.get("/doctor/chat/messages/:sessionId", isAuthenticated_1.authenticateUser, chat_controller_1.getMessageHistory);
+// working hours 
+router.post("/doctor/workinghours", isAuthenticated_1.authenticateUser, doctor_auth_1.setWorkingHours);
 const DoctorthRouter = router;
 exports.default = DoctorthRouter;

@@ -1,5 +1,9 @@
 import express from "express";
-import { signupDoctor, signinDoctor } from "../controllers/doctors/doctor_auth";
+import {
+  signupDoctor,
+  signinDoctor,
+  setWorkingHours,
+} from "../controllers/doctors/doctor_auth";
 import {
   getDoctorAppointments,
   getAppointmentsByDate,
@@ -55,5 +59,7 @@ router.get(
   getMessageHistory,
 );
 
+// working hours 
+router.post("/doctor/workinghours", authenticateUser, setWorkingHours);
 const DoctorthRouter = router;
 export default DoctorthRouter;

@@ -121,12 +121,10 @@ const setWorkingHours = async (req: Request, res: Response) => {
   const { doctorId, workingHours } = req.body;
 
   try {
-    // Delete existing working hours for the doctor
     await prisma.workingHours.deleteMany({
       where: { doctorId },
     });
 
-    // Create new working hours
     const newWorkingHours = await prisma.workingHours.createMany({
       data: workingHours.map((hour: any) => ({
         ...hour,

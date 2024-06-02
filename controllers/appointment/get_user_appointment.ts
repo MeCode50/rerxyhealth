@@ -30,7 +30,7 @@ export const getUsersAppointmentByUser = async (
           select: {
             firstName: true,
             lastName: true,
-            specialization: true,
+            specialization:true ,
           },
         },
       },

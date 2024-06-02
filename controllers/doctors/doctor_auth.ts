@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../../prisma";
 import { signJWT } from "../../helper/jwt_helper";
 import { sendMail } from "../../services/nodemailer/mailer";
+import { StatusCode } from "../../enums/status";
 
 // Signup for doctors
 const signupDoctor = async (req: Request, res: Response) => {
@@ -115,4 +116,34 @@ const signinDoctor = async (req: Request, res: Response) => {
   }
 };
 
-export { signupDoctor, signinDoctor };
+
+const setWorkingHours = async (req: Request, res: Response) => {
+  const { doctorId, workingHours } = req.body;
+
+  try {
+    // Delete existing working hours for the doctor
+    await prisma.workingHours.deleteMany({
+      where: { doctorId },
+    });
+
+    // Create new working hours
+    const newWorkingHours = await prisma.workingHours.createMany({
+      data: workingHours.map((hour: any) => ({
+        ...hour,
+        doctorId,
+      })),
+    });
+
+    res
+      .status(StatusCode.OK)
+      .json({
+        message: "Working hours set successfully",
+        data: newWorkingHours,
+      });
+  } catch (error) {
+    console.error("Error setting working hours:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { signupDoctor, signinDoctor, setWorkingHours };

@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signinDoctor = exports.signupDoctor = void 0;
+exports.setWorkingHours = exports.signinDoctor = exports.signupDoctor = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const prisma_1 = __importDefault(require("../../prisma"));
 const jwt_helper_1 = require("../../helper/jwt_helper");
 const mailer_1 = require("../../services/nodemailer/mailer");
+const status_1 = require("../../enums/status");
 // Signup for doctors
 const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, firstName, lastName, phoneNumber, specialization, country, state, certificate, profilePicture, experienceStartDate, graduationYear, school, medicalLicensePicture, about, } = req.body;
@@ -100,3 +101,27 @@ const signinDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.signinDoctor = signinDoctor;
+const setWorkingHours = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { doctorId, workingHours } = req.body;
+    try {
+        // Delete existing working hours for the doctor
+        yield prisma_1.default.workingHours.deleteMany({
+            where: { doctorId },
+        });
+        // Create new working hours
+        const newWorkingHours = yield prisma_1.default.workingHours.createMany({
+            data: workingHours.map((hour) => (Object.assign(Object.assign({}, hour), { doctorId }))),
+        });
+        res
+            .status(status_1.StatusCode.OK)
+            .json({
+            message: "Working hours set successfully",
+            data: newWorkingHours,
+        });
+    }
+    catch (error) {
+        console.error("Error setting working hours:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+exports.setWorkingHours = setWorkingHours;

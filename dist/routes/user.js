@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+//import { authenticateUser } from "../middleware/isAuthenticated";
+const authmiddleware_1 = require("../middleware/authmiddleware");
+const profile_1 = require("../controllers/profile");
+//import { getUserProfile, updateUserProfile } from "../controllers/profile";
+const get_transaction_pin_1 = require("../controllers/users/get_transaction_pin");
+const verify_transaction_pin_1 = require("../controllers/users/verify_transaction_pin");
+const get_doctors_1 = require("../controllers/appointment/get_doctors");
+const router = express_1.default.Router();
+router.get("/profile/me", authmiddleware_1.verifyUserToken, profile_1.getUserProfile);
+router.put("/profile/update", authmiddleware_1.verifyUserToken, profile_1.updateUserProfile);
+router.get("/profile/transaction_pin", authmiddleware_1.verifyUserToken, get_transaction_pin_1.get_transaction_pin);
+router.post("/profile/verify_pin", authmiddleware_1.verifyUserToken, verify_transaction_pin_1.verify_transaction_pin);
+router.get("/doctors", get_doctors_1.getAllDoctorsByUsers);
+const profileRouter = router;
+exports.default = profileRouter;

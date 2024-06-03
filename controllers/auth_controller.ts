@@ -10,10 +10,11 @@ import { signJWT } from "../helper/jwt_helper";
 import { generateOtp } from "../helper/generate_otp";
 import { sendMail } from "../services/nodemailer/mailer";
 
-
-// Creating new user
 const createUserController = async (req: Request, res: Response) => {
   try {
+    // Validate request body
+    await createUserValidation.validate(req.body);
+
     const {
       firstName,
       lastName,
@@ -23,44 +24,25 @@ const createUserController = async (req: Request, res: Response) => {
       schoolName,
       email,
       password,
-      state,
-      local_government,
-      city,
-      street,
+      address,
     } = req.body;
 
-    await createUserValidation.validate({
-      firstName,
-      lastName,
-      dateOfBirth,
-      country,
-      phoneNumber,
-      schoolName,
-      email,
-      password,
-      address: {
-        street,
-        state,
-        local_government,
-        city,
-        
-    
-  }
-    });
-
+    // Check if user already exists
     const userExists = await prisma.users.findUnique({
       where: { email },
     });
 
     if (userExists) {
       return res.status(StatusCode.Found).json({
-        message: 'User already exists',
+        message: "User already exists",
       });
     }
 
+    // Generate OTP and hash password
     const createOtp = generateOtp();
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create new user
     const newUser = await prisma.users.create({
       data: {
         firstName,
@@ -73,54 +55,45 @@ const createUserController = async (req: Request, res: Response) => {
         password: hashedPassword,
         otp: parseInt(createOtp),
         address: {
-          create: {
-            state,
-            local_government,
-            street,
-            city,
-                      
-          }
-        }
+          create: address,
+        },
       },
       include: {
-        address:true 
-      }
+        address: true,
+      },
     });
 
-    const { id } = newUser;
-    const jwt = signJWT({ id });
-    
+    // Generate JWT token
+    const jwt = signJWT({ id: newUser.id });
 
-    const emailDetails = {
-      subject: 'Welcome to RexHealth 🔥',
-      body: { username: firstName, otp: createOtp },
-      template: 'email_templates/welcome',
-    };
-
-    await sendMail({ email, ...emailDetails });
-
+    // Prepare user details response
     const userDetails = {
-      email: newUser?.email,
-      firstName: newUser?.email,
-      lastName: newUser?.lastName,
-      dateOfBirth: newUser?.dateOfBirth,
-      country: newUser?.country,
-      phoneNumber: newUser?.phoneNumber,
-      schoolName: newUser?.schoolName,
-      address: newUser?.address, 
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      dateOfBirth: newUser.dateOfBirth,
+      country: newUser.country,
+      phoneNumber: newUser.phoneNumber,
+      schoolName: newUser.schoolName,
+      address: newUser.address,
     };
 
+    // Return success response
     return res.status(StatusCode.Created).json({
-      message: 'User created successfully',
+      message: "User created successfully",
       jwt,
       details: userDetails,
       otp: createOtp,
     });
   } catch (error: any) {
+    // Handle errors
     console.error(error);
-    return res.status(StatusCode.InternalServerError).json({ message: error?.message });
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: error?.message });
   }
 };
+
 
 //login user controller
 const loginController = async (req: Request, res: Response) => {
@@ -130,7 +103,7 @@ const loginController = async (req: Request, res: Response) => {
     const user = await prisma.users.findUnique({
       where: { email },
     });
-
+    
     if (!user) {
       return res.status(StatusCode.NotFound).json({
         message: 'User not found',

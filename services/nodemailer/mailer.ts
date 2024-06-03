@@ -1,8 +1,10 @@
 import path from "path";
-
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+import nodemailer from "nodemailer";
+import { config } from "dotenv";
 const handlebarsExpress = require("nodemailer-express-handlebars");
+
+config(); // Load environment variables
+
 interface Nodemailer {
   email: string;
   subject: string;
@@ -12,11 +14,10 @@ interface Nodemailer {
 
 const sendMail = async ({ email, subject, template, body }: Nodemailer) => {
   const transporter = nodemailer.createTransport({
-    service:'gmail',
+    service: 'gmail',
     host: "smtp.gmail.com",
     port: 587,
-    //port: parseInt(process.env.EMAIL_PORT || "465"), // Use default value 465 if EMAIL_PORT is undefined
-    secure: true,
+    secure: false, // Use true for 465, false for other ports
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
@@ -44,7 +45,7 @@ const sendMail = async ({ email, subject, template, body }: Nodemailer) => {
   return new Promise((resolve, reject) => {
     transporter.sendMail(mailOptions, (error: any, info: any) => {
       if (error) {
-        console.error(error);
+        console.error("Error sending email:", error);
         reject(error);
       } else {
         console.log(`Email sent: ${info.response}`);

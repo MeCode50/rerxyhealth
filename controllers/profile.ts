@@ -1,23 +1,28 @@
-//this function helps to get user profile
 import { Request, Response } from "express";
 import prisma from "../prisma";
 import { StatusCode } from "../enums/status";
 
 export const getUserProfile = async (req: Request, res: Response) => {
-  //@ts-ignore
-  const id = req?.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "User ID not provided" });
+  }
 
   try {
-    const getProfile = await prisma.users.findUnique({
-      where: { id },
+    const userProfile = await prisma.users.findUnique({
+      where: { id: userId },
       include: {
         TransactionPin: true,
         SetupProfile: true,
         Wallet: true,
+        address: true,
       },
     });
 
-    if (!getProfile) {
+    if (!userProfile) {
       return res
         .status(StatusCode.NotFound)
         .json({ message: "User profile not found" });
@@ -25,25 +30,28 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
     return res
       .status(StatusCode.OK)
-      .json({ message: "User profile", data: getProfile });
+      .json({ message: "User profile", data: userProfile });
   } catch (err) {
     return res.status(StatusCode.InternalServerError).json({ error: err });
   }
 };
 
-//function to handle profile edit
-
 export const updateUserProfile = async (req: Request, res: Response) => {
-  //@ts-ignore
-  const id = req?.id;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "User ID not provided" });
+  }
 
   try {
     const updateProfile = await prisma.users.update({
-      where: { id },
+      where: { id: userId },
       data: {
-        ...req?.body,
+        ...req.body,
         address: {
-          update: [req?.body.address], 
+          update: [req.body.address],
         },
       },
     });
@@ -61,4 +69,3 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     return res.status(StatusCode.InternalServerError).json({ error: err });
   }
 };
-// come back and fix update profil e postman documentation 

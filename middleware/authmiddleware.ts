@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+/*import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { StatusCode } from "../enums/status";
 import { CRYPTOHASH } from "../constant";
@@ -62,42 +62,71 @@ const checkAdminAuthorization = (
 };
 
 
-
-/*export const attachUserId = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  // Extract the user ID from the request headers or JWT token
-  const userId = req.headers.authorization as string | undefined;
-
-  if (!userId) {
-    return res
-      .status(StatusCode.Unauthorized)
-      .json({ message: "User ID not provided" });
-  }
-
-  // Attach the user ID to the req object
-  req.id = userId;
-
-  next();
-};*/
-
 const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    console.log("No token provided");
     return res
       .status(StatusCode.Unauthorized)
       .json({ message: "No token provided" });
   }
 
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    console.log("Malformed token");
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Malformed token" });
+  }
+
   try {
-    // Verify token and extract user ID
     const decoded = jwt.verify(token, CRYPTOHASH) as { id: string };
+    console.log("Decoded token:", decoded);
+    req.user = { id: decoded.id };
+    next();
+  } catch (error) {
+    console.log("Invalid token:", error);
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Invalid token" });
+  }
+};
 
+export { verifyAdminToken, checkAdminAuthorization , verifyUserToken};*/
+
+
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import { StatusCode } from "../enums/status";
+import { CRYPTOHASH } from "../constant";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: { id: string };
+    }
+  }
+}
+
+const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return res
+      .status(StatusCode.Unauthorized)
+      .json({ message: "Malformed token" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, CRYPTOHASH) as { id: string };
     req.user = { id: decoded.id }; // Set user information on the request object
-
     next();
   } catch (error) {
     return res
@@ -106,4 +135,4 @@ const verifyUserToken = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { verifyAdminToken, checkAdminAuthorization , verifyUserToken};
+export { verifyUserToken };

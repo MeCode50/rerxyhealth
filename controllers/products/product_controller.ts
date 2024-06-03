@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import {
   validate_cart,
   validate_product,
 } from "../../validations/product_validation";
-
-const prisma = new PrismaClient();
+import { uploadToCloudinary } from "../../helper/Cloudinary/cloudinary";
 
 // Get all Product
 const getAllProduct = async (req: Request, res: Response) => {
@@ -52,6 +51,22 @@ const createProduct = async (req: Request, res: Response) => {
       quantity,
       productCategory,
     } = req.body;
+
+    // Check if a file is provided in the request
+    /*if (!req.file) {
+      return res
+        .status(StatusCode.BadRequest)
+        .json({ message: "No file uploaded" });
+    }
+
+    // upload image to cloudinary
+        .status(StatusCode.BadRequest)
+        .json({ message: "No file uploaded" });
+    }
+
+    // upload image to cloudinary
+    const imageUrl = await uploadToCloudinary(req.file);
+    const imageUrl = await uploadToCloudinary(req.file);*/
 
     await validate_product.validate({
       image,
@@ -105,3 +120,5 @@ const deleteProduct = async (req: Request, res: Response) => {
 };
 
 export { getAllProduct, createProduct, deleteProduct, getById };
+  
+  

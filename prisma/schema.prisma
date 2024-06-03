@@ -33,7 +33,19 @@ model Users {
   Cart           CartItem[]
   TransactionPin TransactionPin?
   SaveProduct    SaveProduct[]
+  address        Address[]        
 }
+
+model Address {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  street    String?
+  city      String? 
+  state     String
+  local_government  String
+  user      Users    @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+}
+
 
 model Admin {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -48,6 +60,16 @@ model TransactionPin {
   pin     String
   user    Users? @relation(fields: [usersId], references: [id])
   usersId String @unique @db.ObjectId
+}
+
+model TransactionHistory {
+    id              String      @id @default(auto()) @map("_id") @db.ObjectId
+    email           String      @unique
+    paystack_ref    String
+    payment_status  String
+    time_paid       DateTime    @default(now()) @db.Timestamp 
+    date_paid       DateTime    @default(now()) @db.Timestamp 
+    
 }
 
 model Wallet {
@@ -74,26 +96,63 @@ model SetupProfile {
 
 model Appointment {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  day             String
-  time            String
+  date         DateTime
+ startTime      String
+  endTime       String
   hasEnded        Boolean? @default(false)
   period          Period
+  status          AppointmentStatus 
   appointmentType String
   Doctors         Doctors  @relation(fields: [doctorsId], references: [id])
   user            Users    @relation(fields: [usersId], references: [id])
   usersId         String   @db.ObjectId
   doctorsId       String   @db.ObjectId
+  rating          Int?
+  review          String?
+}
+enum AppointmentStatus {
+  Pending
+  Cancelled
+  Completed
 }
 
 //doctors schemas 
 model Doctors {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  firstName     String
-  lastName      String
-  Appointment   Appointment[]
-  appointmentId String?       @db.ObjectId
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName          String
+  lastName           String
+  email              String       @unique
+  phoneNumber        String
+  password           String
+  specialization     String
+  country            String
+  state              String
+  certificate        String
+  isApproved         Boolean      @default(false)
+  soundEnabled       Boolean      @default(true)
+  inviteFriendsEnabled       Boolean      @default(true)
+  vibrationEnabled   Boolean      @default(true)
+   profilePicture         String?
+  experienceStartDate    DateTime
+  graduationYear         Int
+  school                 String
+  medicalLicensePicture  String
+  about                  String?
+  workingHours           WorkingHours[]
+  Appointment        Appointment[]
+  appointmentId      String?      @db.ObjectId
 }
+ 
 
+
+model WorkingHours {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  day       String
+  startTime String
+  endTime   String
+  doctorId  String   @db.ObjectId
+  doctor    Doctors   @relation(fields: [doctorId], references: [id])
+}
 model Products {
   id              String          @id @default(auto()) @map("_id") @db.ObjectId
   image           String
@@ -122,7 +181,7 @@ model CartItem {
   title     String
   amount    Int
   delivery  String
-  quantity  String
+  quantity  Int
   userId    String   @db.ObjectId
   user      Users    @relation(fields: [userId], references: [id])
   productId String   @db.ObjectId
@@ -152,3 +211,46 @@ enum Period {
   Morning
   Evening
 }
+
+// DiagnosticTest model
+model DiagnosticTest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  price       Int
+  dateCreated DateTime  @default(now())
+ // category     Category  @relation(fields: [categoryName], references: [name])
+  //categoryName  String   @db.ObjectId
+  type        String 
+  selectedTests  SelectedTest[]
+
+}
+
+model SelectedTest {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  testName       String
+  price          Int
+  quantity       Int
+  userId         String    
+  diagnosticTest DiagnosticTest @relation(fields: [diagnosticTestId], references: [id])
+  diagnosticTestId String @db.ObjectId 
+}
+
+model ChatSessions {
+  session_id  String       @id @default(auto()) @map("_id") @db.ObjectId
+  user_id     String       @db.ObjectId
+  doctor_id   String       @db.ObjectId
+  created_at  DateTime     @default(now()) @db.Timestamp
+}
+
+model ChatMessages {
+  message_id    String       @id @default(auto()) @map("_id") @db.ObjectId
+  session_id    String       @db.ObjectId
+  sender_id     String       @db.ObjectId
+  recipient_id  String       @db.ObjectId
+  message       String
+  timestamp     DateTime     @default(now()) @db.Timestamp
+}
+
+
+
+

@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 
-const prisma = new PrismaClient();
 export const get_transaction_pin = async (req: Request, res: Response) => {
   //@ts-ignore
   const id = req?.id as string;

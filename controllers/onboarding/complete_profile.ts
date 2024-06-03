@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { validate_completeProfile } from "../../validations/onboarding";
 import { StatusCode } from "../../enums/status";
@@ -7,7 +7,6 @@ const completeProfile = async (req: Request, res: Response) => {
   const toValidate = req.body;
   //@ts-ignore
   const userId = req?.id;
-  const prisma = new PrismaClient();
 
   try {
     const validations = await validate_completeProfile.validate(toValidate);
@@ -17,6 +16,7 @@ const completeProfile = async (req: Request, res: Response) => {
         username: username,
         matricNumber: matricNumber,
         usersId: userId,
+        //user: { connect: { id: userId } }, 
       },
     });
 
@@ -30,6 +30,7 @@ const completeProfile = async (req: Request, res: Response) => {
       data: {
         balance: 0,
         usersId: userId,
+        //user: { connect: { id: userId } }, // Connect the user ID to the setup profile
       },
     });
 

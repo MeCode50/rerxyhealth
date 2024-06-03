@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../prisma";
 import { StatusCode } from "../enums/status";
 import bcrypt from "bcrypt";
 import {
@@ -10,7 +10,6 @@ import { signJWT } from "../helper/jwt_helper";
 import { generateOtp } from "../helper/generate_otp";
 import { sendMail } from "../services/nodemailer/mailer";
 
-const prisma = new PrismaClient();
 
 // Creating new user
 const createUserController = async (req: Request, res: Response) => {
@@ -24,6 +23,10 @@ const createUserController = async (req: Request, res: Response) => {
       schoolName,
       email,
       password,
+      state,
+      local_government,
+      city,
+      street,
     } = req.body;
 
     await createUserValidation.validate({
@@ -35,6 +38,14 @@ const createUserController = async (req: Request, res: Response) => {
       schoolName,
       email,
       password,
+      address: {
+        street,
+        state,
+        local_government,
+        city,
+        
+    
+  }
     });
 
     const userExists = await prisma.users.findUnique({
@@ -61,11 +72,24 @@ const createUserController = async (req: Request, res: Response) => {
         email: email.toLowerCase(),
         password: hashedPassword,
         otp: parseInt(createOtp),
+        address: {
+          create: {
+            state,
+            local_government,
+            street,
+            city,
+                      
+          }
+        }
       },
+      include: {
+        address:true 
+      }
     });
 
     const { id } = newUser;
     const jwt = signJWT({ id });
+    
 
     const emailDetails = {
       subject: 'Welcome to RexHealth 🔥',
@@ -83,6 +107,7 @@ const createUserController = async (req: Request, res: Response) => {
       country: newUser?.country,
       phoneNumber: newUser?.phoneNumber,
       schoolName: newUser?.schoolName,
+      address: newUser?.address, 
     };
 
     return res.status(StatusCode.Created).json({

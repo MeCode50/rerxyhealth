@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 
-const prisma = new PrismaClient();
 export const verify_transaction_pin = async (req: Request, res: Response) => {
   const { pin } = req.body;
   //@ts-ignore
@@ -31,5 +30,4 @@ export const verify_transaction_pin = async (req: Request, res: Response) => {
   return res.status(StatusCode.OK).send({
     message: "Pin matched",
   });
-
 };

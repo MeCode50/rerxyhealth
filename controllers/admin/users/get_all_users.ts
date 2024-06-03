@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import { StatusCode } from "../../../enums/status";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../../../prisma";
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {

@@ -1,8 +1,7 @@
 import express, { Response, Request } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
 
-const prisma = new PrismaClient();
 //forgotten transaction pin
 const resetTransactionPin = async (res: Response, req: Request) => {
   const { email, pin, confirmPin } = req.body;

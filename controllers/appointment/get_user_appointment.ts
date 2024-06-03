@@ -1,10 +1,13 @@
 import { Response, Request } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../prisma";
 import { StatusCode } from "../../enums/status";
 
-const prisma = new PrismaClient();
 
-export const getUsersAppointment = async (req: Request, res: Response) => {
+
+export const getUsersAppointmentByUser = async (
+  req: Request,
+  res: Response,
+) => {
   //@ts-ignore
   const userId = req?.id;
   try {
@@ -12,20 +15,41 @@ export const getUsersAppointment = async (req: Request, res: Response) => {
       where: {
         usersId: userId,
       },
-      include: {
-        Doctors: false,
+      select: {
+        id: true,
+        date: true,
+        startTime: true,
+        endTime: true,
+        hasEnded: true,
+        period: true,
+        status: true,
+        appointmentType: true,
+        usersId: true,
+        doctorsId: true,
+        Doctors: {
+          select: {
+            firstName: true,
+            lastName: true,
+            specialization:true ,
+          },
+        },
       },
     });
 
-    if (!getAppointment)
+    if (!getAppointment || getAppointment.length === 0) {
       return res
         .status(StatusCode.NoContent)
         .json({ message: "No Appointments" });
+    }
+
     return res
       .status(StatusCode.OK)
       .json({ message: "My appointments", data: getAppointment });
   } catch (err) {
-    return err;
+    console.error("Error fetching appointments:", err);
+    return res
+      .status(StatusCode.InternalServerError)
+      .json({ message: "Failed to fetch appointments" });
   }
 };
 
@@ -38,7 +62,7 @@ export const getAppointmentByDate = async (req: Request, res: Response) => {
     const getAppointment = await prisma.appointment.findMany({
       where: {
         usersId: userId,
-        day: date,
+        date: date,
       },
       include: {
         Doctors: false,

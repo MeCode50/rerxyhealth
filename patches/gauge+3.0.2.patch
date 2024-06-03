@@ -1,0 +1,57 @@
+diff --git a/node_modules/gauge/wide-truncate.js b/node_modules/gauge/wide-truncate.js
+index c531bc4..2082269 100644
+--- a/node_modules/gauge/wide-truncate.js
++++ b/node_modules/gauge/wide-truncate.js
+@@ -1,25 +1,32 @@
+-'use strict'
+-var stringWidth = require('string-width')
+-var stripAnsi = require('strip-ansi')
++'use strict';
+ 
+-module.exports = wideTruncate
++let stringWidth, stripAnsi;
+ 
+-function wideTruncate (str, target) {
+-  if (stringWidth(str) === 0) return str
+-  if (target <= 0) return ''
+-  if (stringWidth(str) <= target) return str
++(async () => {
++    const stringWidthModule = await import('string-width');
++    const stripAnsiModule = await import('strip-ansi');
++    stringWidth = stringWidthModule.default || stringWidthModule;
++    stripAnsi = stripAnsiModule.default || stripAnsiModule;
++})();
+ 
+-  // We compute the number of bytes of ansi sequences here and add
+-  // that to our initial truncation to ensure that we don't slice one
+-  // that we want to keep in half.
+-  var noAnsi = stripAnsi(str)
+-  var ansiSize = str.length + noAnsi.length
+-  var truncated = str.slice(0, target + ansiSize)
++function wideTruncate(str, target) {
++    if (stringWidth(str) === 0) return str;
++    if (target <= 0) return '';
++    if (stringWidth(str) <= target) return str;
+ 
+-  // we have to shrink the result to account for our ansi sequence buffer
+-  // (if an ansi sequence was truncated) and double width characters.
+-  while (stringWidth(truncated) > target) {
+-    truncated = truncated.slice(0, -1)
+-  }
+-  return truncated
++    // We compute the number of bytes of ansi sequences here and add
++    // that to our initial truncation to ensure that we don't slice one
++    // that we want to keep in half.
++    const noAnsi = stripAnsi(str);
++    const ansiSize = str.length + noAnsi.length;
++    let truncated = str.slice(0, target + ansiSize);
++
++    // we have to shrink the result to account for our ansi sequence buffer
++    // (if an ansi sequence was truncated) and double width characters.
++    while (stringWidth(truncated) > target) {
++        truncated = truncated.slice(0, -1);
++    }
++    return truncated;
+ }
++
++module.exports = wideTruncate;

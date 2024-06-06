@@ -26,6 +26,25 @@ const signupDoctor = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
+    // Check if all required fields are provided
+    if (
+      !email ||
+      !password ||
+      !firstName ||
+      !lastName ||
+      !phoneNumber ||
+      !specialization ||
+      !country ||
+      !state ||
+      !certificate ||
+      !experienceStartDate ||
+      !graduationYear ||
+      !school ||
+      !medicalLicensePicture
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingDoctor = await prisma.doctors.findUnique({
       where: { email },
     });
@@ -35,6 +54,14 @@ const signupDoctor = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Convert experienceStartDate to Date object
+    const parsedExperienceStartDate = new Date(experienceStartDate);
+    if (isNaN(parsedExperienceStartDate.getTime())) {
+      return res
+        .status(400)
+        .json({ message: "Invalid date format for experienceStartDate" });
+    }
 
     const newDoctor = await prisma.doctors.create({
       data: {
@@ -48,7 +75,7 @@ const signupDoctor = async (req: Request, res: Response) => {
         state,
         certificate,
         profilePicture,
-        experienceStartDate: new Date(experienceStartDate),
+        experienceStartDate: parsedExperienceStartDate,
         graduationYear,
         school,
         medicalLicensePicture,
@@ -67,13 +94,11 @@ const signupDoctor = async (req: Request, res: Response) => {
     };
     await sendMail({ email, ...emailDetails });
 
-    res
-      .status(201)
-      .json({
-        message: "Doctor registered successfully",
-        jwt,
-        doctor: newDoctor,
-      });
+    res.status(201).json({
+      message: "Doctor registered successfully",
+      jwt,
+      doctor: newDoctor,
+    });
   } catch (error) {
     console.error("Error signing up doctor:", error);
     res.status(500).json({ message: "Internal server error" });

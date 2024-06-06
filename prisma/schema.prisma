@@ -33,7 +33,9 @@ model Users {
   Cart           CartItem[]
   TransactionPin TransactionPin?
   SaveProduct    SaveProduct[]
-  address        Address[]        
+  address        Address[]     
+  orders         Order[]
+   
 }
 
 model Address {
@@ -118,31 +120,31 @@ enum AppointmentStatus {
 
 //doctors schemas 
 model Doctors {
-  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
-  firstName          String
-  lastName           String
-  email              String       @unique
-  phoneNumber        String
-  password           String
-  specialization     String
-  country            String
-  state              String
-  certificate        String
-  isApproved         Boolean      @default(false)
-  soundEnabled       Boolean      @default(true)
-  inviteFriendsEnabled       Boolean      @default(true)
-  vibrationEnabled   Boolean      @default(true)
-   profilePicture         String?
-  yearsOfExperience     Int
- //experienceStartDate    DateTime
-  graduationYear         Int
-  school                 String
-  medicalLicensePicture  String
-  about                  String?
-  workingHours           WorkingHours[]
-  Appointment        Appointment[]
-  appointmentId      String?      @db.ObjectId
+  id                      String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName               String
+  lastName                String
+  email                   String        @unique
+  phoneNumber             String
+  password                String
+  specialization          String
+  country                 String
+  state                   String
+  certificate             String
+  isApproved              Boolean       @default(false)
+  soundEnabled            Boolean       @default(true)
+  inviteFriendsEnabled    Boolean       @default(true)
+  vibrationEnabled        Boolean       @default(true)
+  profilePicture          String?
+  yearsOfExperience       String
+  graduationYear          String
+  school                  String
+  medicalLicensePicture   String
+  about                   String
+  workingHours            WorkingHours[]
+  Appointment             Appointment[]
+  appointmentId           String?       @db.ObjectId
 }
+
  
 
 
@@ -167,6 +169,8 @@ model Products {
   CartItem        CartItem[]
   SaveProduct     SaveProduct[]
   Ratings Rating[]
+  OrderItems      OrderItem[]
+
 }
 
 model Rating {
@@ -188,6 +192,30 @@ model CartItem {
   productId String   @db.ObjectId
   product   Products @relation(fields: [productId], references: [id])
 }
+
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int
+  amount    Float
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Products @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String      @db.ObjectId
+  totalAmount    Float
+  deliveryAddress String
+  status         String
+  deliveryStatus String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  user           Users       @relation(fields: [userId], references: [id])
+  orderItems     OrderItem[]
+}
+
 
 model SaveProduct {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId

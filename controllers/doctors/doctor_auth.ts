@@ -18,12 +18,15 @@ const signupDoctor = async (req: Request, res: Response) => {
     state,
     certificate,
     profilePicture,
-    experienceStartDate,
+    yearsOfExperience,
     graduationYear,
     school,
     medicalLicensePicture,
     about,
   } = req.body;
+
+  // Log the entire request body to debug
+  console.log("Request body:", req.body);
 
   try {
     // Check if all required fields are provided
@@ -37,7 +40,7 @@ const signupDoctor = async (req: Request, res: Response) => {
       !country ||
       !state ||
       !certificate ||
-      !experienceStartDate ||
+      !yearsOfExperience ||
       !graduationYear ||
       !school ||
       !medicalLicensePicture
@@ -55,14 +58,6 @@ const signupDoctor = async (req: Request, res: Response) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Convert experienceStartDate to Date object
-    const parsedExperienceStartDate = new Date(experienceStartDate);
-    if (isNaN(parsedExperienceStartDate.getTime())) {
-      return res
-        .status(400)
-        .json({ message: "Invalid date format for experienceStartDate" });
-    }
-
     const newDoctor = await prisma.doctors.create({
       data: {
         email,
@@ -75,7 +70,7 @@ const signupDoctor = async (req: Request, res: Response) => {
         state,
         certificate,
         profilePicture,
-        experienceStartDate: parsedExperienceStartDate,
+        yearsOfExperience,
         graduationYear,
         school,
         medicalLicensePicture,
@@ -104,7 +99,6 @@ const signupDoctor = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // Signin doctors
 const signinDoctor = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -119,11 +113,9 @@ const signinDoctor = async (req: Request, res: Response) => {
     }
 
     if (!doctor.isApproved) {
-      return res
-        .status(401)
-        .json({
-          message: "Account not yet approved. Please wait for admin approval",
-        });
+      return res.status(401).json({
+        message: "Account not yet approved. Please wait for admin approval",
+      });
     }
 
     const passwordMatch = await bcrypt.compare(password, doctor.password);
@@ -141,7 +133,6 @@ const signinDoctor = async (req: Request, res: Response) => {
   }
 };
 
-
 const setWorkingHours = async (req: Request, res: Response) => {
   const { doctorId, workingHours } = req.body;
 
@@ -157,12 +148,10 @@ const setWorkingHours = async (req: Request, res: Response) => {
       })),
     });
 
-    res
-      .status(StatusCode.OK)
-      .json({
-        message: "Working hours set successfully",
-        data: newWorkingHours,
-      });
+    res.status(StatusCode.OK).json({
+      message: "Working hours set successfully",
+      data: newWorkingHours,
+    });
   } catch (error) {
     console.error("Error setting working hours:", error);
     res.status(500).json({ message: "Internal server error" });

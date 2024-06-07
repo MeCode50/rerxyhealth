@@ -5,12 +5,12 @@ import {
   deleteProduct,
   getById,
 } from "../controllers/products/product_controller";
-import { handleShipping } from "../controllers/products/shipping_controller";
 import { authenticateUser } from "../middleware/isAuthenticated";
 import {
   createCart,
   getAllCart,
   removeCart,
+  handleShipping,
 } from "../controllers/products/cart_controller";
 import {
   createSave,

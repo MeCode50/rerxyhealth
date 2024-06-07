@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+/*import { Request, Response } from "express";
 import { StatusCode } from "../../enums/status";
 import prisma from "../../prisma";
 import { calculateSubtotal } from "../../helper/priceCalculator";
@@ -90,4 +90,4 @@ const handleShipping = async (req: Request, res: Response) => {
   }
 };
 
-export { handleShipping };
+export { handleShipping };*/

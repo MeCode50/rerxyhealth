@@ -20,8 +20,26 @@ const mailer_1 = require("../../services/nodemailer/mailer");
 const status_1 = require("../../enums/status");
 // Signup for doctors
 const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password, firstName, lastName, phoneNumber, specialization, country, state, certificate, profilePicture, experienceStartDate, graduationYear, school, medicalLicensePicture, about, } = req.body;
+    const { email, password, firstName, lastName, phoneNumber, specialization, country, state, certificate, profilePicture, yearsOfExperience, graduationYear, school, medicalLicensePicture, about, } = req.body;
+    // Log the entire request body to debug
+    console.log("Request body:", req.body);
     try {
+        // Check if all required fields are provided
+        if (!email ||
+            !password ||
+            !firstName ||
+            !lastName ||
+            !phoneNumber ||
+            !specialization ||
+            !country ||
+            !state ||
+            !certificate ||
+            !yearsOfExperience ||
+            !graduationYear ||
+            !school ||
+            !medicalLicensePicture) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
         const existingDoctor = yield prisma_1.default.doctors.findUnique({
             where: { email },
         });
@@ -41,7 +59,7 @@ const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 state,
                 certificate,
                 profilePicture,
-                experienceStartDate: new Date(experienceStartDate),
+                yearsOfExperience,
                 graduationYear,
                 school,
                 medicalLicensePicture,
@@ -57,9 +75,7 @@ const signupDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             template: "email_templates/welcome",
         };
         yield (0, mailer_1.sendMail)(Object.assign({ email }, emailDetails));
-        res
-            .status(201)
-            .json({
+        res.status(201).json({
             message: "Doctor registered successfully",
             jwt,
             doctor: newDoctor,
@@ -82,9 +98,7 @@ const signinDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.status(404).json({ message: "Doctor not found" });
         }
         if (!doctor.isApproved) {
-            return res
-                .status(401)
-                .json({
+            return res.status(401).json({
                 message: "Account not yet approved. Please wait for admin approval",
             });
         }
@@ -110,9 +124,7 @@ const setWorkingHours = (req, res) => __awaiter(void 0, void 0, void 0, function
         const newWorkingHours = yield prisma_1.default.workingHours.createMany({
             data: workingHours.map((hour) => (Object.assign(Object.assign({}, hour), { doctorId }))),
         });
-        res
-            .status(status_1.StatusCode.OK)
-            .json({
+        res.status(status_1.StatusCode.OK).json({
             message: "Working hours set successfully",
             data: newWorkingHours,
         });

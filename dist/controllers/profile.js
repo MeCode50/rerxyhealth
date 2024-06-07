@@ -19,9 +19,7 @@ const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function*
     var _a;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
     if (!userId) {
-        return res
-            .status(status_1.StatusCode.Unauthorized)
-            .json({ message: "User ID not provided" });
+        return res.status(status_1.StatusCode.Unauthorized).json({ message: "User ID not provided" });
     }
     try {
         const userProfile = yield prisma_1.default.users.findUnique({
@@ -34,13 +32,9 @@ const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function*
             },
         });
         if (!userProfile) {
-            return res
-                .status(status_1.StatusCode.NotFound)
-                .json({ message: "User profile not found" });
+            return res.status(status_1.StatusCode.NotFound).json({ message: "User profile not found" });
         }
-        return res
-            .status(status_1.StatusCode.OK)
-            .json({ message: "User profile", data: userProfile });
+        return res.status(status_1.StatusCode.OK).json({ message: "User profile", data: userProfile });
     }
     catch (err) {
         return res.status(status_1.StatusCode.InternalServerError).json({ error: err });
@@ -48,31 +42,5 @@ const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getUserProfile = getUserProfile;
 const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.id;
-    if (!userId) {
-        return res
-            .status(status_1.StatusCode.Unauthorized)
-            .json({ message: "User ID not provided" });
-    }
-    try {
-        const updateProfile = yield prisma_1.default.users.update({
-            where: { id: userId },
-            data: Object.assign(Object.assign({}, req.body), { address: {
-                    update: [req.body.address],
-                } }),
-        });
-        if (!updateProfile) {
-            return res
-                .status(status_1.StatusCode.InternalServerError)
-                .json({ message: "Failed to update profile" });
-        }
-        return res
-            .status(status_1.StatusCode.OK)
-            .json({ message: "Profile has been updated successfully" });
-    }
-    catch (err) {
-        return res.status(status_1.StatusCode.InternalServerError).json({ error: err });
-    }
 });
 exports.updateUserProfile = updateUserProfile;

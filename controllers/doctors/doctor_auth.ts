@@ -1,64 +1,18 @@
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import prisma from "../../prisma";
+//import prisma from "../../prisma";
 import { signJWT } from "../../helper/jwt_helper";
 import { sendMail } from "../../services/nodemailer/mailer";
 import { StatusCode } from "../../enums/status";
+import { PrismaClient } from "@prisma/client";
 
-// Signup for doctors
+const prisma = new PrismaClient();
+
 const signupDoctor = async (req: Request, res: Response) => {
-  const {
-    email,
-    password,
-    firstName,
-    lastName,
-    phoneNumber,
-    specialization,
-    country,
-    state,
-    certificate,
-    profilePicture,
-    school,
-    medicalLicensePicture,
-    about,
-  } = req.body;
-
-  // Log the entire request body to debug
-  console.log("Request body:", req.body);
-
   try {
-    // Check if all required fields are provided
-    if (
-      !email ||
-      !password ||
-      !firstName ||
-      !lastName ||
-      !phoneNumber ||
-      !specialization ||
-      !country ||
-      !state ||
-      !certificate ||
-      !school ||
-      !medicalLicensePicture
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-    // Log the school field separately to debug
-    console.log("School field:", school);
-    const existingDoctor = await prisma.doctors.findUnique({
-      where: { email },
-    });
-    console.log("Existing doctor check result:", existingDoctor);
-
-    if (existingDoctor) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    console.log("Creating new doctor with data:", {
+    const {
       email,
-      password: hashedPassword,
+      password,
       firstName,
       lastName,
       phoneNumber,
@@ -67,12 +21,43 @@ const signupDoctor = async (req: Request, res: Response) => {
       state,
       certificate,
       profilePicture,
-      school, 
+      school,
       medicalLicensePicture,
       about,
-      isApproved: false,
+    } = req.body;
+
+    // Check if any required field is missing
+    const requiredFields = [
+      email,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
+      specialization,
+      country,
+      state,
+      certificate,
+      school,
+      medicalLicensePicture,
+    ];
+
+    if (requiredFields.some((field) => !field)) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if the email is already registered
+    const existingDoctor = await prisma.doctors.findUnique({
+      where: { email },
     });
 
+    if (existingDoctor) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create the doctor
     const newDoctor = await prisma.doctors.create({
       data: {
         email,
@@ -84,7 +69,6 @@ const signupDoctor = async (req: Request, res: Response) => {
         country,
         state,
         certificate,
-        profilePicture,
         school,
         medicalLicensePicture,
         about,
@@ -92,16 +76,13 @@ const signupDoctor = async (req: Request, res: Response) => {
       },
     });
 
-    const { id } = newDoctor;
-    const jwt = signJWT({ id });
+    // Generate JWT token
+    const jwt = signJWT({ id: newDoctor.id });
 
-    const emailDetails = {
-      subject: "Welcome to RexHealth 🔥",
-      body: { username: firstName },
-      template: "email_templates/welcome",
-    };
-    await sendMail({ email, ...emailDetails });
+    // Send welcome email (you can implement this function)
+    await sendWelcomeEmail(email, firstName);
 
+    // Send response
     res.status(201).json({
       message: "Doctor registered successfully",
       jwt,
@@ -173,3 +154,7 @@ const setWorkingHours = async (req: Request, res: Response) => {
 };
 
 export { signupDoctor, signinDoctor, setWorkingHours };
+  function sendWelcomeEmail(email: any, firstName: any) {
+    throw new Error("Function not implemented.");
+  }
+

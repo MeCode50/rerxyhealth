@@ -18,8 +18,6 @@ const signupDoctor = async (req: Request, res: Response) => {
     state,
     certificate,
     profilePicture,
-    yearsOfExperience,
-    graduationYear,
     school,
     medicalLicensePicture,
     about,
@@ -40,23 +38,40 @@ const signupDoctor = async (req: Request, res: Response) => {
       !country ||
       !state ||
       !certificate ||
-      !yearsOfExperience ||
-      !graduationYear ||
       !school ||
       !medicalLicensePicture
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
+    // Log the school field separately to debug
+    console.log("School field:", school);
     const existingDoctor = await prisma.doctors.findUnique({
       where: { email },
     });
+    console.log("Existing doctor check result:", existingDoctor);
 
     if (existingDoctor) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log("Creating new doctor with data:", {
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      phoneNumber,
+      specialization,
+      country,
+      state,
+      certificate,
+      profilePicture,
+      school, 
+      medicalLicensePicture,
+      about,
+      isApproved: false,
+    });
 
     const newDoctor = await prisma.doctors.create({
       data: {
@@ -70,8 +85,6 @@ const signupDoctor = async (req: Request, res: Response) => {
         state,
         certificate,
         profilePicture,
-        yearsOfExperience,
-        graduationYear,
         school,
         medicalLicensePicture,
         about,
@@ -99,6 +112,7 @@ const signupDoctor = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 // Signin doctors
 const signinDoctor = async (req: Request, res: Response) => {
   const { email, password } = req.body;

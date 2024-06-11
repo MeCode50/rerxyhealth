@@ -135,8 +135,8 @@ model Doctors {
   inviteFriendsEnabled    Boolean       @default(true)
   vibrationEnabled        Boolean       @default(true)
   profilePicture          String?
-  yearsOfExperience       String
-  graduationYear          String
+  //yearsOfExperience       String
+  //graduationYear          String
   school                  String
   medicalLicensePicture   String
   about                   String
